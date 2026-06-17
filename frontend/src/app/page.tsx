@@ -162,17 +162,17 @@ export default function TrafficDashboard() {
       <div className="flex-1 flex flex-col h-screen overflow-hidden relative">
         
         {/* TopNavBar */}
-        <header className="bg-surface top-0 sticky z-30 border-b border-outline-variant flex justify-between items-center h-16 px-6 lg:px-8 shrink-0">
-          <div className="flex items-center gap-md">
-            <h2 className="font-headline-md text-headline-md font-bold text-on-surface hidden lg:block">Urban Intelligence Platform</h2>
-            <button className="md:hidden text-on-surface-variant hover:text-primary transition-colors">
+        <header className="bg-surface top-0 sticky z-30 border-b border-outline-variant flex justify-between items-center h-16 px-4 md:px-6 lg:px-8 shrink-0 gap-4">
+          <div className="flex items-center gap-md shrink-0">
+            <h2 className="font-headline-md text-headline-md font-bold text-on-surface hidden lg:block truncate">Urban Intelligence Platform</h2>
+            <button className="lg:hidden text-on-surface-variant hover:text-primary transition-colors">
               <span className="material-symbols-outlined">menu</span>
             </button>
           </div>
 
           {/* Search Bar & Actions */}
-          <div className="flex items-center gap-lg flex-1 justify-end">
-            <div className="relative hidden sm:block max-w-md w-full">
+          <div className="flex items-center gap-4 lg:gap-lg flex-1 justify-end min-w-0">
+            <div className="relative hidden md:block max-w-md w-full min-w-[200px]">
               <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none">search</span>
               <input 
                 className="w-full bg-surface-container-low border border-outline-variant rounded-full py-2 pl-10 pr-4 text-body-sm text-on-surface focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all" 
@@ -180,7 +180,10 @@ export default function TrafficDashboard() {
                 type="text"
               />
             </div>
-            <div className="flex items-center gap-sm">
+            <div className="flex items-center gap-1 sm:gap-sm shrink-0">
+              <button className="md:hidden w-10 h-10 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high hover:text-primary transition-all duration-200 relative">
+                <span className="material-symbols-outlined">search</span>
+              </button>
               <button className="w-10 h-10 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high hover:text-primary transition-all duration-200 relative">
                 <span className="material-symbols-outlined">notifications</span>
                 <span className="absolute top-2 right-2 w-2 h-2 bg-error rounded-full"></span>
