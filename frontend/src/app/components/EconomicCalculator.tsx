@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from 'react';
-import { ChevronDown, Calculator, IndianRupee, Clock, TrendingUp, Activity, CarFront, Users, AlertTriangle } from 'lucide-react';
+import { ChevronDown, Calculator, IndianRupee, Clock, TrendingUp, Activity, CarFront, Users, AlertTriangle, HelpCircle } from 'lucide-react';
 
 export default function EconomicCalculator() {
   const [laneWidth, setLaneWidth] = useState<number>(3.5);
@@ -11,6 +11,7 @@ export default function EconomicCalculator() {
   const [occupancy, setOccupancy] = useState<number>(1.4);
   const [vott, setVott] = useState<number>(100);
   const [showBreakdown, setShowBreakdown] = useState<boolean>(true);
+  const [showGuide, setShowGuide] = useState<boolean>(false);
 
   const BASE_CAPACITY = 1800;
   const effectiveWidth = Math.max(0, laneWidth - carWidth);
@@ -49,6 +50,41 @@ export default function EconomicCalculator() {
               <span className="text-xs text-gray-400 uppercase tracking-wider font-bold mb-1">Live Damage Estimate</span>
               <div className="text-3xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-red-500 to-orange-400">
                 ₹{Math.round(economicCost).toLocaleString()}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Quick Guide */}
+        <div className="bg-[#121212] border border-white/10 rounded-3xl overflow-hidden shadow-xl">
+          <button 
+            onClick={() => setShowGuide(!showGuide)}
+            className="w-full p-5 flex justify-between items-center bg-white/[0.02] hover:bg-white/[0.04] transition-colors"
+          >
+            <div className="font-bold text-base flex items-center gap-2">
+              <HelpCircle className="w-5 h-5 text-blue-400" />
+              How to use this Calculator
+            </div>
+            <ChevronDown className={`w-5 h-5 text-gray-400 transition-transform duration-300 ${showGuide ? 'rotate-180' : ''}`} />
+          </button>
+          
+          <div className={`transition-all duration-500 ease-in-out ${showGuide ? 'max-h-[800px] opacity-100 border-t border-white/5' : 'max-h-0 opacity-0'}`}>
+            <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6 text-sm text-gray-300">
+              <div className="bg-white/5 p-4 rounded-xl border border-white/5">
+                <p className="mb-2"><strong className="text-white flex items-center gap-2"><Activity size={16} className="text-blue-400"/> 1. The Physics (LWR Theory)</strong></p>
+                <p>This tool uses Lighthill-Whitham-Richards (LWR) shockwave theory. It calculates the financial damage of a single illegally parked car by modeling how a physical bottleneck creates a backward-propagating queue of delayed vehicles.</p>
+              </div>
+              <div className="bg-white/5 p-4 rounded-xl border border-white/5">
+                <p className="mb-2"><strong className="text-white flex items-center gap-2"><CarFront size={16} className="text-red-400"/> 2. Physical Limits</strong></p>
+                <p>Adjust the lane width and the parked car's width. A wider parked vehicle blocks more of the lane, which drastically drops the road's <strong>Effective Capacity</strong> (the maximum number of cars that can pass per hour).</p>
+              </div>
+              <div className="bg-white/5 p-4 rounded-xl border border-white/5">
+                <p className="mb-2"><strong className="text-white flex items-center gap-2"><TrendingUp size={16} className="text-amber-400"/> 3. Traffic Conditions</strong></p>
+                <p>If the "Arriving Flow" of traffic is higher than the new restricted "Effective Capacity", a shockwave queue forms. The longer the violation lasts, the exponentially worse the cumulative delay gets for the network.</p>
+              </div>
+              <div className="bg-white/5 p-4 rounded-xl border border-white/5">
+                <p className="mb-2"><strong className="text-white flex items-center gap-2"><IndianRupee size={16} className="text-emerald-400"/> 4. Economic Cost</strong></p>
+                <p>We take the total vehicle delay and multiply it by the "Avg Occupancy" (people per car) and the "Value of Time" (local hourly wage) to calculate the final real-world Fiscal Damage caused by the violation.</p>
               </div>
             </div>
           </div>
