@@ -8,6 +8,7 @@ import { AlertCircle, Navigation, Clock, Activity, ShieldAlert, X } from 'lucide
 import AnalyticsTab from './components/AnalyticsTab';
 import EnforcementTab from './components/EnforcementTab';
 import SensorsTab from './components/SensorsTab';
+import EconomicCalculator from './components/EconomicCalculator';
 
 export default function TrafficDashboard() {
   const [hotspots, setHotspots] = useState(null);
@@ -48,6 +49,7 @@ export default function TrafficDashboard() {
   const tabs = [
     { id: "Command Center", icon: "dashboard", fill: true },
     { id: "Analytics", icon: "insert_chart", fill: false },
+    { id: "Economics", icon: "account_balance", fill: false },
     { id: "Enforcement", icon: "gavel", fill: false },
     { id: "Sensors", icon: "videocam", fill: false }
   ];
@@ -534,6 +536,7 @@ export default function TrafficDashboard() {
           )}
 
           {activeTab === "Analytics" && <AnalyticsTab />}
+          {activeTab === "Economics" && <EconomicCalculator />}
           {activeTab === "Enforcement" && <EnforcementTab />}
           {activeTab === "Sensors" && <SensorsTab />}
         </main>
