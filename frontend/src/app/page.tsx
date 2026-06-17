@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
-import Map, { Source, Layer } from 'react-map-gl/maplibre';
+import React, { useState, useEffect, useRef } from 'react';
+import Map, { Source, Layer, MapRef } from 'react-map-gl/maplibre';
 import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { AlertCircle, Navigation, Clock, Activity, ShieldAlert, X } from 'lucide-react';
@@ -16,8 +16,10 @@ export default function TrafficDashboard() {
   const [timeframe, setTimeframe] = useState("Live Data");
   const [district, setDistrict] = useState("");
   const [loading, setLoading] = useState(false);
+  const [activeDropdown, setActiveDropdown] = useState(null);
   const [stats, setStats] = useState({ totalViolations: 0, avgSpeed: 0, busBlocks: 0, loadingZones: 0 });
   const [activeTab, setActiveTab] = useState("Command Center");
+  const mapRef = useRef<MapRef>(null);
 
   const tabs = [
     { id: "Command Center", icon: "dashboard", fill: true },
@@ -75,7 +77,7 @@ export default function TrafficDashboard() {
     id: 'parking-heatmap',
     type: 'heatmap',
     paint: {
-      'heatmap-weight': ['interpolate', ['linear'], ['get', 'violationCount'], 0, 0, 100, 1],
+      'heatmap-weight': ['interpolate', ['linear'], ['get', 'severityScore'], 0, 0, 10, 1],
       'heatmap-intensity': ['interpolate', ['linear'], ['zoom'], 0, 1, 15, 3],
       'heatmap-color': [
         'interpolate',
@@ -180,20 +182,69 @@ export default function TrafficDashboard() {
                 type="text"
               />
             </div>
-            <div className="flex items-center gap-1 sm:gap-sm shrink-0">
-              <button className="md:hidden w-10 h-10 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high hover:text-primary transition-all duration-200 relative">
+            <div className="flex items-center gap-1 sm:gap-sm shrink-0 relative">
+              <button onClick={() => setActiveDropdown(activeDropdown === 'search' ? null : 'search')} className="md:hidden w-10 h-10 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high hover:text-primary transition-all duration-200 relative">
                 <span className="material-symbols-outlined">search</span>
               </button>
-              <button className="w-10 h-10 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high hover:text-primary transition-all duration-200 relative">
+              {activeDropdown === 'search' && (
+                <div className="absolute top-12 right-0 mt-2 w-64 bg-surface-container-high border border-outline-variant rounded-xl shadow-lg p-2 z-50 md:hidden">
+                  <input autoFocus className="w-full bg-surface-container-low border border-outline-variant rounded py-2 px-3 text-body-sm text-on-surface focus:outline-none focus:border-primary" placeholder="Search..." type="text" />
+                </div>
+              )}
+
+              <button onClick={() => setActiveDropdown(activeDropdown === 'notifications' ? null : 'notifications')} className="w-10 h-10 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high hover:text-primary transition-all duration-200 relative">
                 <span className="material-symbols-outlined">notifications</span>
                 <span className="absolute top-2 right-2 w-2 h-2 bg-error rounded-full"></span>
               </button>
-              <button className="w-10 h-10 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high hover:text-primary transition-all duration-200">
+              {activeDropdown === 'notifications' && (
+                <div className="absolute top-12 right-0 mt-2 w-80 bg-surface-container-high border border-outline-variant rounded-xl shadow-lg overflow-hidden z-50">
+                  <div className="p-3 border-b border-outline-variant bg-surface-container-highest">
+                    <h4 className="font-label-md font-bold text-on-surface">Notifications</h4>
+                  </div>
+                  <div className="p-2 space-y-1">
+                    <div className="p-2 rounded-lg bg-surface-container-lowest hover:bg-surface-container-low cursor-pointer transition-colors">
+                      <p className="font-label-md text-on-surface">Severe Congestion in CBD</p>
+                      <p className="text-xs text-on-surface-variant mt-1">2 mins ago</p>
+                    </div>
+                    <div className="p-2 rounded-lg bg-surface-container-lowest hover:bg-surface-container-low cursor-pointer transition-colors">
+                      <p className="font-label-md text-on-surface">High Violation Rate: North Sector</p>
+                      <p className="text-xs text-on-surface-variant mt-1">15 mins ago</p>
+                    </div>
+                  </div>
+                  <div className="p-2 border-t border-outline-variant text-center cursor-pointer hover:bg-surface-container-highest">
+                    <span className="text-xs font-label-md text-primary">Mark all as read</span>
+                  </div>
+                </div>
+              )}
+
+              <button onClick={() => setActiveDropdown(activeDropdown === 'settings' ? null : 'settings')} className="w-10 h-10 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high hover:text-primary transition-all duration-200">
                 <span className="material-symbols-outlined">settings_suggest</span>
               </button>
-              <button className="w-10 h-10 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high hover:text-primary transition-all duration-200">
+              {activeDropdown === 'settings' && (
+                <div className="absolute top-12 right-0 mt-2 w-48 bg-surface-container-high border border-outline-variant rounded-xl shadow-lg overflow-hidden z-50">
+                  <ul className="py-2 text-sm text-on-surface">
+                    <li className="px-4 py-2 hover:bg-surface-container-low cursor-pointer">System Preferences</li>
+                    <li className="px-4 py-2 hover:bg-surface-container-low cursor-pointer">API Integrations</li>
+                    <li className="px-4 py-2 hover:bg-surface-container-low cursor-pointer">User Roles</li>
+                  </ul>
+                </div>
+              )}
+
+              <button onClick={() => setActiveDropdown(activeDropdown === 'profile' ? null : 'profile')} className="w-10 h-10 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high hover:text-primary transition-all duration-200">
                 <span className="material-symbols-outlined">account_circle</span>
               </button>
+              {activeDropdown === 'profile' && (
+                <div className="absolute top-12 right-0 mt-2 w-48 bg-surface-container-high border border-outline-variant rounded-xl shadow-lg overflow-hidden z-50">
+                  <div className="px-4 py-3 border-b border-outline-variant">
+                    <p className="text-sm font-label-md text-on-surface">Admin User</p>
+                    <p className="text-xs text-on-surface-variant truncate">admin@gridlock.app</p>
+                  </div>
+                  <ul className="py-1 text-sm text-on-surface">
+                    <li className="px-4 py-2 hover:bg-surface-container-low cursor-pointer">View Profile</li>
+                    <li className="px-4 py-2 hover:bg-surface-container-low cursor-pointer text-error">Sign out</li>
+                  </ul>
+                </div>
+              )}
             </div>
           </div>
         </header>
@@ -310,11 +361,13 @@ export default function TrafficDashboard() {
                 
                 <div className="flex-1 relative w-full h-full">
                   <Map
+                    ref={mapRef}
                     initialViewState={{
                       longitude: 77.5946,
                       latitude: 12.9716,
                       zoom: 11
                     }}
+                    style={{ width: "100%", height: "100%" }}
                     mapStyle="https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json"
                   >
                     {hotspots && (
@@ -324,6 +377,38 @@ export default function TrafficDashboard() {
                       </Source>
                     )}
                   </Map>
+                  
+                  {/* Recenter Button */}
+                  <button 
+                    onClick={() => mapRef.current?.flyTo({ center: [77.5946, 12.9716], zoom: 11, duration: 1500 })}
+                    className="absolute top-4 right-4 bg-surface-container-high/95 backdrop-blur-md border border-outline-variant text-on-surface-variant hover:text-primary hover:border-primary p-2 rounded-xl shadow-lg transition-all flex items-center justify-center group z-10"
+                    title="Recenter Map"
+                  >
+                    <span className="material-symbols-outlined text-[20px] group-active:scale-90 transition-transform">my_location</span>
+                  </button>
+                  
+                  {/* Map Legend Overlay */}
+                  <div className="absolute bottom-6 left-4 md:bottom-8 md:left-6 bg-surface-container-high/95 backdrop-blur-md border border-outline-variant rounded-xl p-3 shadow-xl z-10 pointer-events-none">
+                    <h4 className="font-label-md font-bold text-on-surface mb-3 text-[10px] uppercase tracking-wider text-on-surface-variant">Map Legend</h4>
+                    
+                    <div className="flex flex-col gap-3 text-xs text-on-surface font-label-md">
+                      <div className="flex items-center gap-3">
+                        <div className="w-4 h-4 rounded-full border-[1.5px] border-[#93000a] flex items-center justify-center relative">
+                          <div className="w-1 h-1 rounded-full bg-[#93000a]"></div>
+                        </div>
+                        <span>Reported Violation</span>
+                      </div>
+                      
+                      <div className="flex flex-col gap-1 mt-1">
+                        <span className="mb-0.5">Violation Density Area</span>
+                        <div className="w-32 h-2.5 rounded-full bg-gradient-to-r from-transparent via-[#14d1ff] to-[#93000a] border border-outline-variant/30"></div>
+                        <div className="flex justify-between text-[10px] text-on-surface-variant px-0.5 mt-0.5">
+                          <span>Sparse</span>
+                          <span>Severe</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
 
@@ -359,7 +444,11 @@ export default function TrafficDashboard() {
                     <p>Loading Hotspots...</p>
                   </div>
                 ) : hotspots?.features && hotspots.features.length > 0 ? hotspots.features.map((feature: any, idx: number) => (
-                  <div key={idx} className="p-3 hover:bg-surface-container rounded cursor-pointer border-b border-outline-variant/50 last:border-0 transition-colors group flex items-start justify-between">
+                  <div 
+                    key={idx} 
+                    onClick={() => mapRef.current?.flyTo({ center: [feature.geometry.coordinates[0], feature.geometry.coordinates[1]], zoom: 15, duration: 1500 })}
+                    className="p-3 hover:bg-surface-container rounded cursor-pointer border-b border-outline-variant/50 last:border-0 transition-colors group flex items-start justify-between"
+                  >
                     <div>
                       <div className="flex items-center gap-2 mb-1">
                         <span className="w-1.5 h-1.5 rounded-full bg-error"></span>

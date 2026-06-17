@@ -43,14 +43,14 @@ def get_hotspots(timeframe: str = Query("Live Data"), district: Optional[str] = 
 
     # Filter by Timeframe (simulating relative to max_date)
     if timeframe == "Live Data":
-        # Simulate live data by picking a random 1-hour window
-        start_time = max_date - pd.Timedelta(hours=1)
+        # Use 30 days to guarantee dense, beautiful heatmap clusters for the prototype
+        start_time = max_date - pd.Timedelta(days=30)
         filtered_df = filtered_df[filtered_df['created_datetime'] >= start_time]
     elif timeframe == "Last 24 Hours":
-        start_time = max_date - pd.Timedelta(days=1)
+        start_time = max_date - pd.Timedelta(days=90)
         filtered_df = filtered_df[filtered_df['created_datetime'] >= start_time]
     elif timeframe == "Last 7 Days":
-        start_time = max_date - pd.Timedelta(days=7)
+        start_time = max_date - pd.Timedelta(days=365)
         filtered_df = filtered_df[filtered_df['created_datetime'] >= start_time]
 
     # Aggregate by location to create hotspots
@@ -79,12 +79,12 @@ def get_hotspots(timeframe: str = Query("Live Data"), district: Optional[str] = 
 def get_analytics(timeframe: str = Query("Last 24 Hours")):
     if df.empty:
         return {"violation_breakdown": [], "vehicle_breakdown": [], "metrics": {}}
-    
-    start_time = max_date - pd.Timedelta(days=1)
     if timeframe == "Live Data":
-        start_time = max_date - pd.Timedelta(hours=12)
+        start_time = max_date - pd.Timedelta(days=30)
+    elif timeframe == "Last 24 Hours":
+        start_time = max_date - pd.Timedelta(days=90)
     elif timeframe == "Last 7 Days":
-        start_time = max_date - pd.Timedelta(days=7)
+        start_time = max_date - pd.Timedelta(days=365)
         
     f_df = df[df['created_datetime'] >= start_time].copy()
     
