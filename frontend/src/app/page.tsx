@@ -19,7 +19,31 @@ export default function TrafficDashboard() {
   const [activeDropdown, setActiveDropdown] = useState(null);
   const [stats, setStats] = useState({ totalViolations: 0, avgSpeed: 0, busBlocks: 0, loadingZones: 0 });
   const [activeTab, setActiveTab] = useState("Command Center");
+  const [mapTheme, setMapTheme] = useState('dark');
   const mapRef = useRef<MapRef>(null);
+
+  const getMapStyleUrl = (theme: string) => {
+    if (theme === 'dark') return "https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json";
+    if (theme === 'light') return "https://basemaps.cartocdn.com/gl/positron-gl-style/style.json";
+    if (theme === 'satellite') return {
+      "version": 8,
+      "sources": {
+        "esri": {
+          "type": "raster",
+          "tiles": ["https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"],
+          "tileSize": 256
+        }
+      },
+      "layers": [{
+        "id": "satellite",
+        "type": "raster",
+        "source": "esri",
+        "minzoom": 0,
+        "maxzoom": 22
+      }]
+    };
+    return "https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json";
+  };
 
   const tabs = [
     { id: "Command Center", icon: "dashboard", fill: true },
@@ -368,7 +392,7 @@ export default function TrafficDashboard() {
                       zoom: 11
                     }}
                     style={{ width: "100%", height: "100%" }}
-                    mapStyle="https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json"
+                    mapStyle={getMapStyleUrl(mapTheme) as any}
                   >
                     {hotspots && (
                       <Source type="geojson" data={hotspots}>
@@ -377,6 +401,38 @@ export default function TrafficDashboard() {
                       </Source>
                     )}
                   </Map>
+                  
+                  {/* Map Style Switcher Overlay */}
+                  <div className="absolute top-4 left-4 bg-[#1e2025]/90 backdrop-blur-md border border-white/10 rounded-2xl p-1.5 shadow-xl z-10 flex items-center gap-4">
+                    <div className="flex items-center gap-2 pl-3 hidden sm:flex">
+                      <div className="w-2 h-2 rounded-full bg-error animate-pulse"></div>
+                      <span className="font-bold text-white text-xs tracking-widest">MAP</span>
+                      <span className="text-[9px] font-bold text-error border border-error/30 bg-error/10 px-1.5 py-0.5 rounded uppercase tracking-wider">Live</span>
+                    </div>
+                    
+                    <div className="w-[1px] h-6 bg-white/10 hidden sm:block"></div>
+                    
+                    <div className="flex bg-black/40 rounded-xl p-1">
+                      <button 
+                        onClick={() => setMapTheme('dark')}
+                        className={`px-3 sm:px-4 py-1.5 rounded-lg text-[10px] sm:text-xs font-bold transition-all ${mapTheme === 'dark' ? 'bg-[#3e52ff] text-white shadow-md' : 'text-white/60 hover:text-white'}`}
+                      >
+                        DARK
+                      </button>
+                      <button 
+                        onClick={() => setMapTheme('light')}
+                        className={`px-3 sm:px-4 py-1.5 rounded-lg text-[10px] sm:text-xs font-bold transition-all ${mapTheme === 'light' ? 'bg-[#3e52ff] text-white shadow-md' : 'text-white/60 hover:text-white'}`}
+                      >
+                        LIGHT
+                      </button>
+                      <button 
+                        onClick={() => setMapTheme('satellite')}
+                        className={`px-3 sm:px-4 py-1.5 rounded-lg text-[10px] sm:text-xs font-bold transition-all ${mapTheme === 'satellite' ? 'bg-[#3e52ff] text-white shadow-md' : 'text-white/60 hover:text-white'}`}
+                      >
+                        SATELLITE
+                      </button>
+                    </div>
+                  </div>
                   
                   {/* Recenter Button */}
                   <button 
