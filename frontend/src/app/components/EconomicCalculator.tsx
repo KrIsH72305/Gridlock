@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { ChevronDown, Calculator, IndianRupee, Clock, TrendingUp, Activity, CarFront, Users, AlertTriangle, HelpCircle } from 'lucide-react';
+import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
 
 export default function EconomicCalculator() {
   const [laneWidth, setLaneWidth] = useState<number>(3.5);
@@ -25,8 +26,24 @@ export default function EconomicCalculator() {
   const economicCost = personHoursLost * vott;
   const queueGrowthPerMin = excessDemand / 60;
 
+  // Chart 1: Exponential Delay Data
+  const delayData = [];
+  const maxMins = Math.max(durationMin, 15);
+  for (let m = 0; m <= maxMins; m += Math.max(1, Math.floor(maxMins / 10))) {
+    const dHours = m / 60;
+    const vehHours = 0.5 * excessDemand * Math.pow(dHours, 2);
+    const cost = Math.round(vehHours * occupancy * vott);
+    delayData.push({ minute: m, cost: cost });
+  }
+
+  // Chart 2: Capacity Comparison Data
+  const capacityData = [
+    { name: 'Base Cap', value: BASE_CAPACITY, fill: '#3b82f6' },
+    { name: 'Effective Cap', value: blockedCapacity, fill: '#ef4444' }
+  ];
+
   return (
-    <div className="bg-[#0a0a0a] min-h-full p-4 md:p-8 text-white font-sans">
+    <div className="w-full text-white font-sans pb-20">
       <div className="max-w-6xl mx-auto space-y-8">
         
         {/* Header section with gradient */}
@@ -165,6 +182,24 @@ export default function EconomicCalculator() {
                 </div>
               </div>
             </div>
+
+            {/* Chart Explanations Box (Fills empty space) */}
+            <div className="mt-12 pt-8 border-t border-white/10 relative z-10">
+              <h4 className="text-sm font-bold text-gray-300 flex items-center gap-2 mb-4">
+                <Activity className="w-5 h-5 text-blue-400" /> Chart Legend & Physics Engine
+              </h4>
+              <div className="space-y-4 text-xs leading-relaxed text-gray-400">
+                <div className="bg-white/5 p-4 rounded-xl border border-white/5">
+                  <p className="mb-1"><strong className="text-red-400 flex items-center gap-1.5"><TrendingUp size={14}/> Exponential Economic Loss</strong></p>
+                  <p>As the blockage duration increases, traffic doesn't just build up linearly. Delayed vehicles slow down the cars behind them, causing a cascading "shockwave" queue. The line chart visualizes how fast this financial damage curve bends upward.</p>
+                </div>
+                <div className="bg-white/5 p-4 rounded-xl border border-white/5">
+                  <p className="mb-1"><strong className="text-blue-400 flex items-center gap-1.5"><Activity size={14}/> Road Capacity Bottleneck</strong></p>
+                  <p>The Bar Chart simulates the physical road. The blue bar is the road's natural capacity. The red bar is what's left after the parked car takes up lane space. If the <strong className="text-amber-400">Yellow Dotted Line</strong> (Arrival Flow) overtakes the red bar, a traffic jam begins forming.</p>
+                </div>
+              </div>
+            </div>
+
           </div>
 
           {/* Right Column: Results & Breakdown */}
@@ -265,6 +300,52 @@ export default function EconomicCalculator() {
                       : 'No queue is actively forming under these conditions.'}
                   </div>
 
+                </div>
+              </div>
+            </div>
+
+            {/* CHARTS SECTION */}
+            <div className="space-y-6">
+              <div className="bg-[#121212] p-6 rounded-3xl border border-white/10 shadow-xl">
+                <h4 className="text-sm font-bold text-gray-300 uppercase tracking-widest mb-6 flex items-center gap-2">
+                  <TrendingUp size={16} className="text-red-400" /> Exponential Economic Loss
+                </h4>
+                <div className="h-[250px] w-full">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <LineChart data={delayData} margin={{ top: 5, right: 10, left: 10, bottom: 0 }}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#ffffff10" vertical={false} />
+                      <XAxis dataKey="minute" stroke="#ffffff40" fontSize={11} tickFormatter={(val) => `${val}m`} />
+                      <YAxis stroke="#ffffff40" fontSize={11} tickFormatter={(val) => `₹${val}`} width={55} />
+                      <RechartsTooltip 
+                        contentStyle={{ backgroundColor: '#1e2025', borderColor: '#ffffff20', fontSize: '13px', borderRadius: '8px' }}
+                        formatter={(value: any) => [`₹${value.toLocaleString()}`, 'Fiscal Damage']}
+                        labelFormatter={(label) => `Minute ${label}`}
+                      />
+                      <Line type="monotone" dataKey="cost" stroke="#f87171" strokeWidth={3} dot={{ r: 3, fill: '#f87171', strokeWidth: 0 }} activeDot={{ r: 6 }} animationDuration={500} />
+                    </LineChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
+
+              <div className="bg-[#121212] p-6 rounded-3xl border border-white/10 shadow-xl">
+                <h4 className="text-sm font-bold text-gray-300 uppercase tracking-widest mb-6 flex items-center gap-2">
+                  <Activity size={16} className="text-blue-400" /> Road Capacity Bottleneck
+                </h4>
+                <div className="h-[180px] w-full">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={capacityData} layout="vertical" margin={{ top: 0, right: 30, left: 0, bottom: 0 }}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#ffffff10" horizontal={false} />
+                      <XAxis type="number" stroke="#ffffff40" fontSize={11} />
+                      <YAxis dataKey="name" type="category" stroke="#ffffff70" fontSize={11} width={90} />
+                      <RechartsTooltip 
+                        cursor={{fill: '#ffffff05'}}
+                        contentStyle={{ backgroundColor: '#1e2025', borderColor: '#ffffff20', fontSize: '13px', borderRadius: '8px' }}
+                        formatter={(value: any) => [`${value} PCU/hr`, 'Capacity']}
+                      />
+                      <Bar dataKey="value" radius={[0, 4, 4, 0]} animationDuration={500} />
+                      <ReferenceLine x={arrivingFlow} stroke="#fbbf24" strokeDasharray="3 3" label={{ position: 'top', value: 'Arrival Flow', fill: '#fbbf24', fontSize: 11 }} />
+                    </BarChart>
+                  </ResponsiveContainer>
                 </div>
               </div>
             </div>
