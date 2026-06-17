@@ -28,10 +28,20 @@ export default function TrafficDashboard() {
   const [forecastData, setForecastData] = useState<any>(null);
   const [notifications, setNotifications] = useState([
     { id: 1, text: 'Severe Congestion in CBD', time: '2 mins ago', read: false },
-    { id: 2, text: 'High Violation Rate: North Sector', time: '15 mins ago', read: false },
   ]);
   const mapRef = useRef<MapRef>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
+
+  const [isLoggedIn, setIsLoggedIn] = useState(true);
+  const [showSupportModal, setShowSupportModal] = useState(false);
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+  const [faqOpenIndex, setFaqOpenIndex] = useState<number | null>(null);
+  const [supportForm, setSupportForm] = useState({ category: 'Technical Issue', message: '' });
+  const [isSubmittingSupport, setIsSubmittingSupport] = useState(false);
+  const [supportSuccess, setSupportSuccess] = useState(false);
+  const [loginEmail, setLoginEmail] = useState('admin@gridlock.app');
+  const [loginPassword, setLoginPassword] = useState('••••••••');
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
 
   const getMapStyleUrl = (theme: string) => {
     if (theme === 'dark') return "https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json";
@@ -232,6 +242,80 @@ export default function TrafficDashboard() {
     }
   };
 
+  if (!isLoggedIn) {
+    return (
+      <div 
+        className="flex items-center justify-center h-screen w-full relative bg-cover bg-center bg-no-repeat font-body-md text-on-surface"
+        style={{ backgroundImage: 'url("/bg-hero.png")' }}
+      >
+        <div className="absolute inset-0 bg-[#060a16]/80 z-0 pointer-events-none"></div>
+        
+        <div className="bg-[#121626]/60 backdrop-blur-2xl border border-white/10 rounded-2xl p-8 max-w-md w-full mx-4 shadow-[0_20px_50px_rgba(0,0,0,0.6)] z-10 flex flex-col items-center">
+          <div className="w-14 h-14 rounded-xl bg-primary-container flex items-center justify-center mb-4 shadow-lg shadow-primary/20">
+            <span className="material-symbols-outlined text-[32px] text-on-primary-container" style={{ fontVariationSettings: "'FILL' 1" }}>domain</span>
+          </div>
+          <h1 className="font-headline-lg text-3xl font-bold text-primary tracking-tight">Urban Intel</h1>
+          <p className="font-label-md text-sm text-on-surface-variant mb-6">Traffic & City Command Center</p>
+          
+          <form 
+            onSubmit={(e) => {
+              e.preventDefault();
+              setIsLoggingIn(true);
+              setTimeout(() => {
+                setIsLoggingIn(false);
+                setIsLoggedIn(true);
+              }, 1500);
+            }}
+            className="w-full flex flex-col gap-4 text-body-sm"
+          >
+            <div className="flex flex-col gap-xs">
+              <label className="text-[10px] font-bold text-white/50 uppercase tracking-wider pl-1">Email Address</label>
+              <input 
+                type="email" 
+                value={loginEmail}
+                onChange={(e) => setLoginEmail(e.target.value)}
+                required
+                className="w-full bg-black/40 border border-outline-variant rounded-lg px-3 py-2 text-on-surface focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"
+              />
+            </div>
+            
+            <div className="flex flex-col gap-xs">
+              <label className="text-[10px] font-bold text-white/50 uppercase tracking-wider pl-1">Password</label>
+              <input 
+                type="password" 
+                value={loginPassword}
+                onChange={(e) => setLoginPassword(e.target.value)}
+                required
+                className="w-full bg-black/40 border border-outline-variant rounded-lg px-3 py-2 text-on-surface focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"
+              />
+            </div>
+            
+            <button 
+              type="submit"
+              disabled={isLoggingIn}
+              className="w-full bg-primary text-on-primary font-bold py-2.5 rounded-lg mt-2 transition-all hover:brightness-110 flex items-center justify-center gap-2 cursor-pointer font-label-md"
+            >
+              {isLoggingIn ? (
+                <>
+                  <span className="material-symbols-outlined animate-spin text-[18px]">sync</span>
+                  <span>Verifying Session...</span>
+                </>
+              ) : (
+                <>
+                  <span className="material-symbols-outlined text-[18px]">login</span>
+                  <span>Sign In</span>
+                </>
+              )}
+            </button>
+          </form>
+          <div className="mt-6 text-center text-xs text-on-surface-variant/70">
+            For assistance, contact <span className="text-primary hover:underline cursor-pointer">support@gridlock.app</span>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div 
       className="text-on-surface font-body-md overflow-hidden flex h-screen w-full relative bg-cover bg-center bg-no-repeat"
@@ -289,14 +373,20 @@ export default function TrafficDashboard() {
             Export Report
           </button>
           <div className="flex flex-col gap-xs mt-sm">
-            <a className="flex items-center gap-md px-sm py-xs rounded text-on-surface-variant hover:bg-surface-container-high transition-colors duration-200" href="#">
+            <button 
+              onClick={() => setShowSupportModal(true)}
+              className="flex items-center gap-md px-sm py-xs rounded text-on-surface-variant hover:bg-surface-container-high transition-colors duration-200 w-full text-left cursor-pointer"
+            >
               <span className="material-symbols-outlined text-[20px]">help</span>
               <span className="font-body-sm text-body-sm">Support</span>
-            </a>
-            <a className="flex items-center gap-md px-sm py-xs rounded text-on-surface-variant hover:bg-surface-container-high transition-colors duration-200" href="#">
+            </button>
+            <button 
+              onClick={() => setShowLogoutConfirm(true)}
+              className="flex items-center gap-md px-sm py-xs rounded text-on-surface-variant hover:bg-surface-container-high transition-colors duration-200 w-full text-left cursor-pointer"
+            >
               <span className="material-symbols-outlined text-[20px]">logout</span>
               <span className="font-body-sm text-body-sm">Log Out</span>
-            </a>
+            </button>
           </div>
         </div>
       </nav>
@@ -385,7 +475,15 @@ export default function TrafficDashboard() {
                   </div>
                   <ul className="py-1 text-sm text-on-surface">
                     <li className="px-4 py-2 hover:bg-surface-container-low cursor-pointer">View Profile</li>
-                    <li className="px-4 py-2 hover:bg-surface-container-low cursor-pointer text-error">Sign out</li>
+                    <li 
+                      onClick={() => {
+                        setShowLogoutConfirm(true);
+                        setActiveDropdown(null);
+                      }} 
+                      className="px-4 py-2 hover:bg-surface-container-low cursor-pointer text-error"
+                    >
+                      Sign out
+                    </li>
                   </ul>
                 </div>
               )}
@@ -702,6 +800,173 @@ export default function TrafficDashboard() {
           {activeTab === "Sensors" && <SensorsTab />}
         </main>
       </div>
+
+      {/* Support Help Center Modal */}
+      {showSupportModal && (
+        <div className="fixed inset-0 flex items-center justify-center bg-[#060a16]/80 backdrop-blur-md z-[100] p-4">
+          <div className="bg-[#121626]/90 border border-white/10 rounded-2xl p-6 max-w-2xl w-full shadow-[0_20px_50px_rgba(0,0,0,0.5)] flex flex-col gap-4 relative">
+            <button 
+              onClick={() => {
+                setShowSupportModal(false);
+                setSupportSuccess(false);
+                setSupportForm({ category: 'Technical Issue', message: '' });
+              }}
+              className="absolute top-4 right-4 text-on-surface-variant hover:text-white transition-colors cursor-pointer"
+            >
+              <span className="material-symbols-outlined">close</span>
+            </button>
+            
+            <div className="flex items-center gap-sm pb-2 border-b border-outline-variant">
+              <span className="material-symbols-outlined text-primary text-2xl">help_center</span>
+              <div>
+                <h3 className="text-lg font-bold text-on-surface font-headline-md">Support & Help Center</h3>
+                <p className="text-xs text-on-surface-variant font-body-sm">Resolve platform issues and submit tickets</p>
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-2">
+              {/* FAQ Section */}
+              <div className="flex flex-col gap-3">
+                <h4 className="text-xs font-bold text-white/50 uppercase tracking-wider font-label-md">Frequently Asked Questions</h4>
+                <div className="flex flex-col gap-2 overflow-y-auto max-h-[300px] pr-1">
+                  {[
+                    {
+                      q: "How is congestion score calculated?",
+                      a: "It is derived dynamically by calculating live traffic speeds relative to historical sector baselines, weighted with active parking violation counts."
+                    },
+                    {
+                      q: "How can I export CSV reports?",
+                      a: "Choose the timeframe and district in the Command Center tab filters, then click the 'Export Report' button at the bottom of the sidebar."
+                    },
+                    {
+                      q: "How does the AI Dispatch routing work?",
+                      a: "Our forecasting system monitors hotspot trend cycles to suggest where police units will have the maximum deterrent effect."
+                    }
+                  ].map((faq, idx) => (
+                    <div key={idx} className="border border-white/5 rounded-lg overflow-hidden bg-black/20">
+                      <button 
+                        onClick={() => setFaqOpenIndex(faqOpenIndex === idx ? null : idx)}
+                        className="w-full text-left px-3 py-2 text-xs font-bold text-on-surface flex justify-between items-center hover:bg-white/5 transition-colors font-body-sm cursor-pointer"
+                      >
+                        <span>{faq.q}</span>
+                        <span className="material-symbols-outlined text-[16px] transition-transform duration-200" style={{ transform: faqOpenIndex === idx ? 'rotate(180deg)' : 'none' }}>expand_more</span>
+                      </button>
+                      {faqOpenIndex === idx && (
+                        <div className="px-3 pb-2.5 text-xs text-on-surface-variant leading-relaxed font-body-sm bg-black/10">
+                          {faq.a}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+              
+              {/* Ticket Form Section */}
+              <div className="flex flex-col gap-3 border-t md:border-t-0 md:border-l border-outline-variant pt-4 md:pt-0 md:pl-6">
+                <h4 className="text-xs font-bold text-white/50 uppercase tracking-wider font-label-md">Submit a Support Ticket</h4>
+                
+                {supportSuccess ? (
+                  <div className="flex-1 flex flex-col items-center justify-center text-center p-4 bg-primary/10 rounded-xl border border-primary/20 animate-fade-in">
+                    <span className="material-symbols-outlined text-4xl text-primary mb-2 animate-bounce">check_circle</span>
+                    <h5 className="text-sm font-bold text-on-surface font-headline-md">Ticket Submitted</h5>
+                    <p className="text-xs text-on-surface-variant mt-1 font-body-sm">We will review your inquiry and get back to you within 24 hours.</p>
+                  </div>
+                ) : (
+                  <form 
+                    onSubmit={(e) => {
+                      e.preventDefault();
+                      setIsSubmittingSupport(true);
+                      setTimeout(() => {
+                        setIsSubmittingSupport(false);
+                        setSupportSuccess(true);
+                      }, 1000);
+                    }}
+                    className="flex flex-col gap-3 text-xs"
+                  >
+                    <div className="flex flex-col gap-1">
+                      <label className="text-[10px] font-bold text-white/40 uppercase tracking-wider font-label-md">Category</label>
+                      <select 
+                        value={supportForm.category}
+                        onChange={(e) => setSupportForm({ ...supportForm, category: e.target.value })}
+                        className="w-full bg-black/40 border border-outline-variant rounded px-2.5 py-1.5 focus:outline-none focus:border-primary text-on-surface font-body-sm"
+                      >
+                        <option value="Technical Issue">Technical Issue</option>
+                        <option value="Data Discrepancy">Data Discrepancy</option>
+                        <option value="Feature Request">Feature Request</option>
+                        <option value="Account Settings">Account Settings</option>
+                      </select>
+                    </div>
+                    
+                    <div className="flex flex-col gap-1">
+                      <label className="text-[10px] font-bold text-white/40 uppercase tracking-wider font-label-md">Description</label>
+                      <textarea 
+                        value={supportForm.message}
+                        onChange={(e) => setSupportForm({ ...supportForm, message: e.target.value })}
+                        required
+                        rows={4}
+                        placeholder="Describe your issue or feedback..."
+                        className="w-full bg-black/40 border border-outline-variant rounded px-2.5 py-1.5 focus:outline-none focus:border-primary text-on-surface resize-none font-body-sm"
+                      />
+                    </div>
+                    
+                    <button 
+                      type="submit"
+                      disabled={isSubmittingSupport}
+                      className="w-full bg-primary text-on-primary font-bold py-2 rounded transition-all hover:brightness-110 flex items-center justify-center gap-1.5 cursor-pointer font-label-md"
+                    >
+                      {isSubmittingSupport ? (
+                        <>
+                          <span className="material-symbols-outlined animate-spin text-[16px]">sync</span>
+                          <span>Sending...</span>
+                        </>
+                      ) : (
+                        <>
+                          <span className="material-symbols-outlined text-[16px]">send</span>
+                          <span>Submit Ticket</span>
+                        </>
+                      )}
+                    </button>
+                  </form>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Logout Confirmation Dialog */}
+      {showLogoutConfirm && (
+        <div className="fixed inset-0 flex items-center justify-center bg-[#060a16]/80 backdrop-blur-md z-[100] p-4">
+          <div className="bg-[#121626]/95 border border-white/10 rounded-xl p-5 max-w-sm w-full shadow-2xl flex flex-col gap-4 text-center">
+            <div className="w-12 h-12 rounded-full bg-error/15 text-error flex items-center justify-center mx-auto animate-pulse">
+              <span className="material-symbols-outlined text-[24px]">logout</span>
+            </div>
+            
+            <div>
+              <h3 className="text-base font-bold text-on-surface font-headline-md">Confirm Log Out</h3>
+              <p className="text-xs text-on-surface-variant mt-1.5 leading-relaxed font-body-sm">Are you sure you want to end your current session? You will need to log back in to access the command center.</p>
+            </div>
+            
+            <div className="grid grid-cols-2 gap-3 mt-1">
+              <button 
+                onClick={() => setShowLogoutConfirm(false)}
+                className="w-full border border-outline-variant hover:bg-white/5 text-on-surface font-bold py-2 rounded-lg text-xs transition-all cursor-pointer font-label-md"
+              >
+                Cancel
+              </button>
+              <button 
+                onClick={() => {
+                  setShowLogoutConfirm(false);
+                  setIsLoggedIn(false);
+                }}
+                className="w-full bg-error text-on-error font-bold py-2 rounded-lg text-xs transition-all hover:brightness-110 cursor-pointer font-label-md"
+              >
+                Log Out
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
