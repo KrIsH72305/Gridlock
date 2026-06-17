@@ -9,6 +9,7 @@ import AnalyticsTab from './components/AnalyticsTab';
 import EnforcementTab from './components/EnforcementTab';
 import SensorsTab from './components/SensorsTab';
 import EconomicCalculator from './components/EconomicCalculator';
+import DispatchPanel from './components/DispatchPanel';
 
 export default function TrafficDashboard() {
   const [hotspots, setHotspots] = useState(null);
@@ -22,6 +23,7 @@ export default function TrafficDashboard() {
   const [activeTab, setActiveTab] = useState("Command Center");
   const [mapTheme, setMapTheme] = useState('dark');
   const [isPredictiveMode, setIsPredictiveMode] = useState(false);
+  const [isDispatchPanelOpen, setIsDispatchPanelOpen] = useState(false);
   const [forecastData, setForecastData] = useState<any>(null);
   const mapRef = useRef<MapRef>(null);
 
@@ -240,7 +242,18 @@ export default function TrafficDashboard() {
 
         {/* CTA & Footer */}
         <div className="px-md pt-md border-t border-outline-variant flex flex-col gap-sm">
-          <button onClick={handleExportReport} className="w-full bg-primary-container text-on-primary-container font-label-md text-label-md py-sm rounded hover:brightness-110 transition-all flex items-center justify-center gap-xs">
+          <button 
+            onClick={() => setIsDispatchPanelOpen(!isDispatchPanelOpen)}
+            className={`w-full font-label-md text-label-md py-sm rounded transition-all flex items-center justify-center gap-xs ${
+              isDispatchPanelOpen 
+                ? 'bg-[#f44336] text-white hover:brightness-110 shadow-lg shadow-[#f44336]/20' 
+                : 'bg-primary text-on-primary hover:brightness-110'
+            }`}
+          >
+            <span className="material-symbols-outlined text-[18px]">emergency_share</span>
+            {isDispatchPanelOpen ? 'Close Dispatch' : 'Dispatch AI'}
+          </button>
+          <button onClick={handleExportReport} className="w-full bg-surface-container-high text-on-surface font-label-md text-label-md py-sm rounded hover:brightness-110 transition-all flex items-center justify-center gap-xs">
             <span className="material-symbols-outlined text-[18px]">download</span>
             Export Report
           </button>
@@ -492,6 +505,13 @@ export default function TrafficDashboard() {
                     )}
                   </Map>
                   
+                  {/* Dispatch Panel Overlay */}
+                  <DispatchPanel 
+                    isOpen={isDispatchPanelOpen} 
+                    onClose={() => setIsDispatchPanelOpen(false)} 
+                    district={district}
+                  />
+
                   {/* Map Style Switcher Overlay */}
                   <div className="absolute top-4 left-4 bg-[#1e2025]/90 backdrop-blur-md border border-white/10 rounded-2xl p-1.5 shadow-xl z-10 flex items-center gap-4">
                     <div className="flex items-center gap-1 pl-2 pr-2 hidden sm:flex">

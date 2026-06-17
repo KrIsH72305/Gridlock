@@ -119,6 +119,71 @@ def get_forecast():
 
     return {"forecasts": forecast_list}
 
+@app.get("/api/dispatch")
+def get_dispatch(district: Optional[str] = Query(None)):
+    if df.empty:
+        return {"dispatch_queue": []}
+
+    # Simulate "Live" data by getting the most recent 30 days of data
+    start_time = max_date - pd.Timedelta(days=30)
+    filtered_df = df[df['created_datetime'] >= start_time].copy()
+    
+    if district and district.strip():
+        filtered_df = filtered_df[filtered_df['police_station'].str.contains(district, case=False, na=False)]
+
+    filtered_df['lat_r'] = filtered_df['latitude'].round(3)
+    filtered_df['lon_r'] = filtered_df['longitude'].round(3)
+    
+    grouped = filtered_df.groupby(['lat_r', 'lon_r', 'location']).size().reset_index(name='weight')
+    
+    # Take top 15 to calculate ROI on
+    top_targets = grouped.sort_values('weight', ascending=False).head(15)
+
+    dispatch_list = []
+    import random
+    random.seed(42) # Deterministic for the demo
+    
+    for i, row in top_targets.iterrows():
+        weight = int(row['weight'])
+        location_name = str(row['location'])
+        
+        # Simulate Criticality: Major hubs get higher scores
+        criticality = 1.0
+        if "junction" in location_name.lower() or "mall" in location_name.lower() or "metro" in location_name.lower():
+            criticality = 1.5
+        elif weight > 50:
+            criticality = 1.3
+            
+        # Simulate ETA (minutes) based roughly on distance from center (randomized 5-30 for demo)
+        eta = random.randint(5, 30)
+        
+        # Core Algorithm: ROI Score = (Violations * Criticality) / ETA
+        roi_score = (weight * criticality) / eta
+        
+        # Action determination
+        action = "Dispatch Flatbed"
+        if roi_score > 15:
+            action = "Dispatch Heavy Tow"
+        elif roi_score < 3:
+            action = "Issue E-Challan"
+
+        dispatch_list.append({
+            "id": f"TOW-{random.randint(1000,9999)}",
+            "latitude": row['lat_r'],
+            "longitude": row['lon_r'],
+            "location": location_name,
+            "violations": weight,
+            "criticality": criticality,
+            "eta_mins": eta,
+            "roi_score": round(roi_score, 1),
+            "action": action
+        })
+
+    # Sort strictly by ROI Score
+    dispatch_list.sort(key=lambda x: x['roi_score'], reverse=True)
+
+    return {"dispatch_queue": dispatch_list}
+
 @app.get("/api/analytics")
 def get_analytics(timeframe: str = Query("Last 24 Hours")):
     if df.empty:
