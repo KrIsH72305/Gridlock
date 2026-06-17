@@ -121,6 +121,25 @@ export default function TrafficDashboard() {
     }
   }, [isPredictiveMode, forecastData]);
 
+  const handleExportReport = () => {
+    if (!hotspots || !hotspots.features || hotspots.features.length === 0) {
+      alert("No data available to export.");
+      return;
+    }
+    const headers = ["Latitude", "Longitude", "Violation Count", "Severity Score", "Location Name"];
+    const rows = hotspots.features.map((f: any) => 
+      `${f.geometry.coordinates[1]},${f.geometry.coordinates[0]},${f.properties.violationCount},${f.properties.severityScore.toFixed(2)},"${f.properties.locationName}"`
+    );
+    const csvContent = "data:text/csv;charset=utf-8," + [headers.join(","), ...rows].join("\n");
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", `gridlock_report_${new Date().toISOString().split('T')[0]}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   const heatmapLayer = {
     id: 'parking-heatmap',
     type: 'heatmap',
@@ -221,7 +240,7 @@ export default function TrafficDashboard() {
 
         {/* CTA & Footer */}
         <div className="px-md pt-md border-t border-outline-variant flex flex-col gap-sm">
-          <button className="w-full bg-primary-container text-on-primary-container font-label-md text-label-md py-sm rounded hover:brightness-110 transition-all flex items-center justify-center gap-xs">
+          <button onClick={handleExportReport} className="w-full bg-primary-container text-on-primary-container font-label-md text-label-md py-sm rounded hover:brightness-110 transition-all flex items-center justify-center gap-xs">
             <span className="material-symbols-outlined text-[18px]">download</span>
             Export Report
           </button>
@@ -358,10 +377,25 @@ export default function TrafficDashboard() {
                 </select>
                 <span className="material-symbols-outlined absolute right-2 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none">expand_more</span>
               </div>
-              <button className="bg-surface-container border border-outline-variant hover:border-primary text-on-surface px-md py-sm rounded transition-colors flex items-center gap-xs">
-                <span className="material-symbols-outlined text-[18px]">filter_list</span>
-                <span className="font-label-md hidden sm:inline">Filters</span>
-              </button>
+              <div className="relative">
+                <button 
+                  onClick={() => setActiveDropdown(activeDropdown === 'filters' ? null : 'filters')}
+                  className={`bg-surface-container border hover:border-primary text-on-surface px-4 py-2 rounded-md transition-colors flex items-center justify-center gap-2 h-[38px] ${activeDropdown === 'filters' ? 'border-primary' : 'border-outline-variant'}`}
+                >
+                  <span className="material-symbols-outlined text-[18px] leading-none">filter_list</span>
+                  <span className="font-label-md hidden sm:inline leading-none font-medium mt-[1px]">Filters {district && '(1)'}</span>
+                </button>
+
+                {activeDropdown === 'filters' && (
+                  <div className="absolute top-full right-0 mt-2 w-48 bg-[#1e2025] border border-white/10 rounded-lg shadow-xl z-50 p-2 text-body-sm">
+                    <div className="font-bold text-white/50 mb-2 px-2 text-[10px] uppercase tracking-wider">Police Station</div>
+                    <button onClick={() => { setDistrict(""); setActiveDropdown(null); }} className={`w-full text-left px-2 py-1.5 rounded hover:bg-white/5 transition-colors ${district === "" ? 'text-[#3e52ff] font-bold bg-[#3e52ff]/10' : 'text-white/80'}`}>All Districts</button>
+                    <button onClick={() => { setDistrict("Ashoknagar"); setActiveDropdown(null); }} className={`w-full text-left px-2 py-1.5 rounded hover:bg-white/5 transition-colors ${district === "Ashoknagar" ? 'text-[#3e52ff] font-bold bg-[#3e52ff]/10' : 'text-white/80'}`}>Ashoknagar</button>
+                    <button onClick={() => { setDistrict("Koramangala"); setActiveDropdown(null); }} className={`w-full text-left px-2 py-1.5 rounded hover:bg-white/5 transition-colors ${district === "Koramangala" ? 'text-[#3e52ff] font-bold bg-[#3e52ff]/10' : 'text-white/80'}`}>Koramangala</button>
+                    <button onClick={() => { setDistrict("Madiwala"); setActiveDropdown(null); }} className={`w-full text-left px-2 py-1.5 rounded hover:bg-white/5 transition-colors ${district === "Madiwala" ? 'text-[#3e52ff] font-bold bg-[#3e52ff]/10' : 'text-white/80'}`}>Madiwala</button>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
 
@@ -373,53 +407,49 @@ export default function TrafficDashboard() {
               
               {/* Top Summary Metric Cards */}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                <div className="bg-surface-container-low border border-outline-variant rounded-lg p-sm relative overflow-hidden group">
-                  <div className="flex items-center gap-xs text-on-surface-variant font-label-md mb-xs">
-                    <span className="material-symbols-outlined text-[16px]">report</span>
-                    <span>TOTAL VIOLATIONS</span>
+                <div className="bg-[#1e2025]/80 backdrop-blur-md border border-white/5 border-t-[3px] border-t-[#f44336] rounded-xl p-4 relative overflow-hidden group hover:border-white/20 transition-all shadow-lg">
+                  <div className="flex items-center gap-2 text-white/50 font-bold text-[10px] tracking-widest uppercase mb-3">
+                    <span className="material-symbols-outlined text-[14px]">report</span>
+                    <span className="truncate">TOTAL VIOLATIONS</span>
                   </div>
-                  <div className="font-display-lg text-3xl font-bold text-on-surface">{stats.totalViolations.toLocaleString()}</div>
-                  <div className="flex items-center gap-xs mt-1 text-error font-body-sm text-xs">
-                    <span className="material-symbols-outlined text-[16px]">trending_up</span>
+                  <div className="font-display-lg text-3xl font-black text-white tracking-tight mb-2">{stats.totalViolations.toLocaleString()}</div>
+                  <div className="flex items-center gap-1.5 text-[#f44336] font-bold text-[10px] uppercase tracking-wider">
+                    <span className="material-symbols-outlined text-[14px] animate-pulse">trending_up</span>
                     <span>Live Tracking</span>
                   </div>
                 </div>
 
-                <div className="bg-surface-container-low border border-outline-variant rounded-lg p-sm relative overflow-hidden group">
-                  <div className="flex items-center gap-xs text-on-surface-variant font-label-md mb-xs">
-                    <span className="material-symbols-outlined text-[16px]">speed</span>
-                    <span>AVG SPEED (CBD)</span>
+                <div className="bg-[#1e2025]/80 backdrop-blur-md border border-white/5 border-t-[3px] border-t-[#3e52ff] rounded-xl p-4 relative overflow-hidden group hover:border-white/20 transition-all shadow-lg">
+                  <div className="flex items-center gap-2 text-white/50 font-bold text-[10px] tracking-widest uppercase mb-3">
+                    <span className="material-symbols-outlined text-[14px]">speed</span>
+                    <span className="truncate">AVG SPEED (CBD)</span>
                   </div>
-                  <div className="font-display-lg text-3xl font-bold text-on-surface">{stats.avgSpeed} <span className="text-body-md text-on-surface-variant text-base">mph</span></div>
-                  <div className="flex items-center gap-xs mt-1 text-error font-body-sm text-xs">
-                    <span className="material-symbols-outlined text-[16px]">trending_down</span>
+                  <div className="font-display-lg text-3xl font-black text-white tracking-tight mb-2">{stats.avgSpeed} <span className="text-white/40 text-base font-semibold">mph</span></div>
+                  <div className="flex items-center gap-1.5 text-[#f44336] font-bold text-[10px] uppercase tracking-wider">
+                    <span className="material-symbols-outlined text-[14px]">trending_down</span>
                     <span>-2.4 mph avg</span>
                   </div>
                 </div>
 
-                <div className="bg-surface-container-low border border-outline-variant rounded-lg p-sm relative overflow-hidden group">
-                  <div className="flex items-center gap-xs text-on-surface-variant font-label-md mb-xs">
-                    <span className="material-symbols-outlined text-[16px]">bus_alert</span>
-                    <span>BUS LANE BLOCKS</span>
+                <div className="bg-[#1e2025]/80 backdrop-blur-md border border-white/5 border-t-[3px] border-t-amber-500 rounded-xl p-4 relative overflow-hidden group hover:border-white/20 transition-all shadow-lg">
+                  <div className="flex items-center gap-2 text-white/50 font-bold text-[10px] tracking-widest uppercase mb-3">
+                    <span className="material-symbols-outlined text-[14px]">bus_alert</span>
+                    <span className="truncate">BUS LANE BLOCKS</span>
                   </div>
-                  <div className="font-display-lg text-3xl font-bold text-on-surface">{stats.busBlocks.toLocaleString()}</div>
-                  <div className="flex items-center gap-xs mt-1 text-on-surface-variant font-body-sm text-xs w-full">
-                    <span className="w-full bg-surface-variant h-1 rounded-full overflow-hidden inline-block">
-                      <div className="bg-error h-full" style={{ width: '65%' }}></div>
-                    </span>
+                  <div className="font-display-lg text-3xl font-black text-white tracking-tight mb-3">{stats.busBlocks.toLocaleString()}</div>
+                  <div className="w-full bg-black/40 h-1.5 rounded-full overflow-hidden">
+                    <div className="bg-gradient-to-r from-amber-600 to-amber-400 h-full rounded-full" style={{ width: '65%' }}></div>
                   </div>
                 </div>
 
-                <div className="bg-surface-container-low border border-outline-variant rounded-lg p-sm relative overflow-hidden group">
-                  <div className="flex items-center gap-xs text-on-surface-variant font-label-md mb-xs">
-                    <span className="material-symbols-outlined text-[16px]">local_shipping</span>
-                    <span>LOADING ZONES</span>
+                <div className="bg-[#1e2025]/80 backdrop-blur-md border border-white/5 border-t-[3px] border-t-emerald-500 rounded-xl p-4 relative overflow-hidden group hover:border-white/20 transition-all shadow-lg">
+                  <div className="flex items-center gap-2 text-white/50 font-bold text-[10px] tracking-widest uppercase mb-3">
+                    <span className="material-symbols-outlined text-[14px]">local_shipping</span>
+                    <span className="truncate">LOADING ZONES</span>
                   </div>
-                  <div className="font-display-lg text-3xl font-bold text-on-surface">{stats.loadingZones.toLocaleString()}</div>
-                  <div className="flex items-center gap-xs mt-1 text-on-surface-variant font-body-sm text-xs w-full">
-                    <span className="w-full bg-surface-variant h-1 rounded-full overflow-hidden inline-block">
-                      <div className="bg-secondary h-full" style={{ width: '82%' }}></div>
-                    </span>
+                  <div className="font-display-lg text-3xl font-black text-white tracking-tight mb-3">{stats.loadingZones.toLocaleString()}</div>
+                  <div className="w-full bg-black/40 h-1.5 rounded-full overflow-hidden">
+                    <div className="bg-gradient-to-r from-emerald-600 to-emerald-400 h-full rounded-full" style={{ width: '82%' }}></div>
                   </div>
                 </div>
               </div>
