@@ -17,6 +17,7 @@ export default function TrafficDashboard() {
   const [hoverInfo, setHoverInfo] = useState(null);
   const [timeframe, setTimeframe] = useState("Live Data");
   const [district, setDistrict] = useState("");
+  const [availableDistricts, setAvailableDistricts] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState(null);
   const [stats, setStats] = useState({ totalViolations: 0, avgSpeed: 0, busBlocks: 0, loadingZones: 0 });
@@ -57,6 +58,15 @@ export default function TrafficDashboard() {
     { id: "Enforcement", icon: "gavel", fill: false },
     { id: "Sensors", icon: "videocam", fill: false }
   ];
+
+  useEffect(() => {
+    fetch("http://localhost:8000/api/districts")
+      .then(res => res.json())
+      .then(data => {
+        if (data.districts) setAvailableDistricts(data.districts);
+      })
+      .catch(err => console.error("Error fetching districts:", err));
+  }, []);
 
   useEffect(() => {
     setLoading(true);
@@ -405,12 +415,18 @@ export default function TrafficDashboard() {
                 </button>
 
                 {activeDropdown === 'filters' && (
-                  <div className="absolute top-full right-0 mt-2 w-48 bg-[#1e2025] border border-white/10 rounded-lg shadow-xl z-50 p-2 text-body-sm">
+                  <div className="absolute top-full right-0 mt-2 w-56 bg-[#1e2025]/95 backdrop-blur-xl border border-white/10 rounded-xl shadow-[0_10px_40px_rgba(0,0,0,0.8)] z-50 p-2 text-body-sm max-h-[320px] overflow-y-auto">
                     <div className="font-bold text-white/50 mb-2 px-2 text-[10px] uppercase tracking-wider">Police Station</div>
                     <button onClick={() => { setDistrict(""); setActiveDropdown(null); }} className={`w-full text-left px-2 py-1.5 rounded hover:bg-white/5 transition-colors ${district === "" ? 'text-[#3e52ff] font-bold bg-[#3e52ff]/10' : 'text-white/80'}`}>All Districts</button>
-                    <button onClick={() => { setDistrict("Ashoknagar"); setActiveDropdown(null); }} className={`w-full text-left px-2 py-1.5 rounded hover:bg-white/5 transition-colors ${district === "Ashoknagar" ? 'text-[#3e52ff] font-bold bg-[#3e52ff]/10' : 'text-white/80'}`}>Ashoknagar</button>
-                    <button onClick={() => { setDistrict("Koramangala"); setActiveDropdown(null); }} className={`w-full text-left px-2 py-1.5 rounded hover:bg-white/5 transition-colors ${district === "Koramangala" ? 'text-[#3e52ff] font-bold bg-[#3e52ff]/10' : 'text-white/80'}`}>Koramangala</button>
-                    <button onClick={() => { setDistrict("Madiwala"); setActiveDropdown(null); }} className={`w-full text-left px-2 py-1.5 rounded hover:bg-white/5 transition-colors ${district === "Madiwala" ? 'text-[#3e52ff] font-bold bg-[#3e52ff]/10' : 'text-white/80'}`}>Madiwala</button>
+                    {availableDistricts.map(dist => (
+                      <button 
+                        key={dist} 
+                        onClick={() => { setDistrict(dist); setActiveDropdown(null); }} 
+                        className={`w-full text-left px-2 py-1.5 rounded hover:bg-white/5 transition-colors ${district === dist ? 'text-[#3e52ff] font-bold bg-[#3e52ff]/10' : 'text-white/80'}`}
+                      >
+                        {dist}
+                      </button>
+                    ))}
                   </div>
                 )}
               </div>

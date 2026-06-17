@@ -30,6 +30,14 @@ except Exception as e:
     print(f"Failed to load dataset: {e}")
     df = pd.DataFrame()
 
+@app.get("/api/districts")
+def get_districts():
+    if df.empty:
+        return {"districts": []}
+    # Get top 20 most frequent police stations with actual data
+    districts = df['police_station'].dropna().value_counts().head(20).index.tolist()
+    return {"districts": sorted([str(d) for d in districts])}
+
 @app.get("/api/hotspots")
 def get_hotspots(timeframe: str = Query("Live Data"), district: Optional[str] = Query(None)):
     if df.empty:
