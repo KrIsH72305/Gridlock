@@ -6,6 +6,14 @@ import Link from 'next/link';
 export default function LandingPage() {
   const [activeMockHotspot, setActiveMockHotspot] = useState<number | null>(0);
 
+  const handleScrollTo = (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
+    e.preventDefault();
+    const element = document.getElementById(id);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   const mockHotspotsData = [
     { id: 1, name: "Subedar Chatram Road", lanes: 2, delay: 18.4, violations: 4188, capLoss: "50%" },
     { id: 2, name: "Kamaraj Road", lanes: 3, delay: 12.2, violations: 1449, capLoss: "33%" },
@@ -26,34 +34,75 @@ export default function LandingPage() {
         }
       `}</style>
 
-      {/* Beautiful Street Grid Live Wallpaper */}
-      <div className="absolute top-0 inset-x-0 h-screen overflow-hidden pointer-events-none z-0 bg-gradient-to-b from-[#060a16] via-[#09081f]/20 to-[#060a16]">
+      {/* Dynamic Traffic Light Trails Live Wallpaper */}
+      <div className="absolute top-0 inset-x-0 h-screen overflow-hidden pointer-events-none z-0 bg-[#060a16]">
+        {/* Ambient background glows */}
+        <div className="absolute top-1/4 -right-1/4 w-[600px] h-[600px] rounded-full bg-violet-600/10 blur-[150px]"></div>
+        <div className="absolute bottom-1/4 -left-1/4 w-[600px] h-[600px] rounded-full bg-blue-600/5 blur-[150px]"></div>
+
         <svg 
-          className="absolute w-full h-full opacity-30 road-grid-container" 
+          className="absolute w-full h-full opacity-45 mix-blend-screen" 
           viewBox="0 0 1440 600" 
           preserveAspectRatio="none" 
           xmlns="http://www.w3.org/2000/svg"
         >
-          {/* Faint road grid pattern representing traffic network */}
-          <line x1="0" y1="120" x2="1440" y2="120" stroke="rgba(255,255,255,0.03)" strokeWidth="0.8" />
-          <line x1="0" y1="280" x2="1440" y2="280" stroke="rgba(255,255,255,0.03)" strokeWidth="0.8" />
-          <line x1="0" y1="440" x2="1440" y2="440" stroke="rgba(255,255,255,0.03)" strokeWidth="0.8" />
-          
-          <line x1="180" y1="0" x2="180" y2="600" stroke="rgba(255,255,255,0.03)" strokeWidth="0.8" />
-          <line x1="580" y1="0" x2="580" y2="600" stroke="rgba(255,255,255,0.03)" strokeWidth="0.8" />
-          <line x1="980" y1="0" x2="980" y2="600" stroke="rgba(255,255,255,0.03)" strokeWidth="0.8" />
-          
-          {/* Curved avenue lines mimicking real geography */}
-          <path d="M -50,160 Q 400,240 800,100 T 1500,200" fill="none" stroke="rgba(124,92,255,0.08)" strokeWidth="1.2" />
-          <path d="M -50,220 Q 300,120 700,340 T 1500,280" fill="none" stroke="rgba(124,92,255,0.06)" strokeWidth="1" />
-          <path d="M -50,380 Q 500,250 900,450 T 1500,380" fill="none" stroke="rgba(124,92,255,0.08)" strokeWidth="1.2" />
-          
-          {/* Intersections (nodes) */}
-          <circle cx="180" cy="120" r="3" fill="#7C5CFF" opacity="0.3" />
-          <circle cx="580" cy="280" r="3.5" fill="#7C5CFF" opacity="0.4" />
-          <circle cx="980" cy="440" r="3" fill="#7C5CFF" opacity="0.3" />
-          <circle cx="700" cy="340" r="2.5" fill="#7C5CFF" opacity="0.25" />
+          <defs>
+            {/* Animating Gradients along the paths */}
+            <linearGradient id="blue-trail-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+              <animate attributeName="x1" from="-100%" to="100%" dur="12s" repeatCount="indefinite" />
+              <animate attributeName="x2" from="0%" to="200%" dur="12s" repeatCount="indefinite" />
+              <stop offset="0%" stopColor="#3e52ff" stopOpacity="0" />
+              <stop offset="45%" stopColor="#3e52ff" stopOpacity="0.8" />
+              <stop offset="50%" stopColor="#4cd6ff" stopOpacity="1" />
+              <stop offset="55%" stopColor="#3e52ff" stopOpacity="0.8" />
+              <stop offset="100%" stopColor="#3e52ff" stopOpacity="0" />
+            </linearGradient>
+
+            <linearGradient id="violet-trail-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+              <animate attributeName="x1" from="100%" to="-100%" dur="16s" repeatCount="indefinite" />
+              <animate attributeName="x2" from="200%" to="0%" dur="16s" repeatCount="indefinite" />
+              <stop offset="0%" stopColor="#7C5CFF" stopOpacity="0" />
+              <stop offset="45%" stopColor="#7C5CFF" stopOpacity="0.7" />
+              <stop offset="50%" stopColor="#ffb4ab" stopOpacity="1" />
+              <stop offset="55%" stopColor="#7C5CFF" stopOpacity="0.7" />
+              <stop offset="100%" stopColor="#7C5CFF" stopOpacity="0" />
+            </linearGradient>
+
+            <linearGradient id="orange-trail-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+              <animate attributeName="x1" from="-100%" to="100%" dur="20s" repeatCount="indefinite" />
+              <animate attributeName="x2" from="0%" to="200%" dur="20s" repeatCount="indefinite" />
+              <stop offset="0%" stopColor="#ff9800" stopOpacity="0" />
+              <stop offset="45%" stopColor="#ff9800" stopOpacity="0.6" />
+              <stop offset="50%" stopColor="#f44336" stopOpacity="0.9" />
+              <stop offset="55%" stopColor="#ff9800" stopOpacity="0.6" />
+              <stop offset="100%" stopColor="#ff9800" stopOpacity="0" />
+            </linearGradient>
+          </defs>
+
+          {/* Blue Bundle: Main flowing artery (left-to-right) */}
+          <path d="M -100,240 C 400,360 900,210 1540,290" fill="none" stroke="url(#blue-trail-grad)" strokeWidth="1.5" className="blur-[0.5px]" />
+          <path d="M -100,250 C 400,380 900,220 1540,300" fill="none" stroke="url(#blue-trail-grad)" strokeWidth="4" className="blur-[3px]" />
+          <path d="M -100,265 C 400,400 900,230 1540,315" fill="none" stroke="url(#blue-trail-grad)" strokeWidth="12" className="blur-[8px] opacity-60" />
+          <path d="M -100,250 C 400,380 900,220 1540,300" fill="none" stroke="url(#blue-trail-grad)" strokeWidth="40" className="blur-[24px] opacity-30" />
+
+          {/* Violet Bundle: Counter-flow traffic (right-to-left) */}
+          <path d="M 1540,390 C 1000,470 500,290 -100,340" fill="none" stroke="url(#violet-trail-grad)" strokeWidth="2" className="blur-[0.5px]" />
+          <path d="M 1540,400 C 1000,480 500,300 -100,350" fill="none" stroke="url(#violet-trail-grad)" strokeWidth="5" className="blur-[4px]" />
+          <path d="M 1540,415 C 1000,495 500,315 -100,365" fill="none" stroke="url(#violet-trail-grad)" strokeWidth="15" className="blur-[10px] opacity-50" />
+          <path d="M 1540,400 C 1000,480 500,300 -100,350" fill="none" stroke="url(#violet-trail-grad)" strokeWidth="50" className="blur-[30px] opacity-25" />
+
+          {/* Orange Bundle: Slow lane / outer road (left-to-right) */}
+          <path d="M -100,175 C 400,295 900,115 1540,215" fill="none" stroke="url(#orange-trail-grad)" strokeWidth="1" className="blur-[0.5px]" />
+          <path d="M -100,180 C 400,300 900,120 1540,220" fill="none" stroke="url(#orange-trail-grad)" strokeWidth="3" className="blur-[3px]" />
+          <path d="M -100,180 C 400,300 900,120 1540,220" fill="none" stroke="url(#orange-trail-grad)" strokeWidth="15" className="blur-[12px] opacity-40" />
+
+          {/* Lower purple bundle to balance the lower vertical space */}
+          <path d="M -100,450 C 400,520 900,420 1540,480" fill="none" stroke="url(#violet-trail-grad)" strokeWidth="2.5" className="blur-[1px]" />
+          <path d="M -100,450 C 400,520 900,420 1540,480" fill="none" stroke="url(#violet-trail-grad)" strokeWidth="10" className="blur-[8px] opacity-40" />
         </svg>
+
+        {/* Faint road grid pattern overlay for structure */}
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:40px_40px]"></div>
       </div>
 
       {/* Header / Navigation */}
@@ -67,16 +116,16 @@ export default function LandingPage() {
           </div>
 
           <nav className="hidden md:flex items-center gap-8 text-sm font-semibold text-[#c5c5d9]">
-            <a href="#how-it-works" className="hover:text-white transition-colors">How It Works</a>
-            <a href="#problem" className="hover:text-white transition-colors">The Problem</a>
-            <a href="#bias" className="hover:text-white transition-colors">Patrol Bias</a>
+            <a href="#how-it-works" onClick={(e) => handleScrollTo(e, 'how-it-works')} className="hover:text-white transition-colors">How It Works</a>
+            <a href="#problem" onClick={(e) => handleScrollTo(e, 'problem')} className="hover:text-white transition-colors">The Problem</a>
+            <a href="#bias" onClick={(e) => handleScrollTo(e, 'bias')} className="hover:text-white transition-colors">Patrol Bias</a>
             <a href="https://github.com/Drifting-Moon/locklock" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors flex items-center gap-1">
               GitHub <span className="material-symbols-outlined text-sm">open_in_new</span>
             </a>
           </nav>
 
           <div className="flex items-center gap-4">
-            <Link href="/dashboard" className="bg-[#7C5CFF] hover:bg-[#6c4be0] hover:shadow-md hover:shadow-[#7C5CFF]/25 text-white text-xs font-bold uppercase tracking-wider px-5 py-2.5 rounded-lg transition-all active:scale-[0.98]">
+            <Link href="/dashboard" className="bg-[#7C5CFF] hover:bg-[#6c4be0] text-white text-xs font-bold uppercase tracking-wider px-5 py-2.5 rounded-[8px] transition-all active:scale-[0.98]">
               View Live Demo
             </Link>
           </div>
@@ -106,10 +155,10 @@ export default function LandingPage() {
             </p>
 
             <div className="mt-8 flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
-              <Link href="/dashboard" className="w-full sm:w-auto bg-[#7C5CFF] hover:bg-[#6c4be0] hover:shadow-md hover:shadow-[#7C5CFF]/25 text-white font-bold text-sm tracking-wide px-6 py-3 rounded-lg transition-all text-center">
+              <Link href="/dashboard" className="w-full sm:w-auto bg-[#7C5CFF] hover:bg-[#6c4be0] hover:shadow-md hover:shadow-[#7C5CFF]/25 text-white font-bold text-sm tracking-wide px-6 py-3 rounded-[8px] transition-all text-center">
                 View Live Demo
               </Link>
-              <a href="#how-it-works" className="w-full sm:w-auto bg-white/5 hover:bg-white/10 text-white font-bold text-sm border border-white/10 px-6 py-3 rounded-lg transition-all hover:border-white/20 text-center">
+              <a href="#how-it-works" onClick={(e) => handleScrollTo(e, 'how-it-works')} className="w-full sm:w-auto bg-white/5 hover:bg-white/10 text-white font-bold text-sm border border-white/10 px-6 py-3 rounded-[8px] transition-all hover:border-white/20 text-center">
                 How It Works
               </a>
             </div>
@@ -199,21 +248,20 @@ export default function LandingPage() {
                 <path d="M 0,220 C 150,220 200,100 400,100" stroke="#7C5CFF" strokeWidth="1" strokeDasharray="4 4" fill="none"/>
               </svg>
 
-              {/* Glowing DBSCAN Hotspots */}
+              {/* Flat DBSCAN Hotspots */}
               <div className="absolute top-[28%] left-[45%] -translate-x-1/2 -translate-y-1/2">
-                <div className="absolute inset-0 w-24 h-24 rounded-full bg-red-600/10 border-2 border-red-500/30 -translate-x-1/2 -translate-y-1/2 animate-ping"></div>
-                <div className="absolute inset-0 w-16 h-16 rounded-full bg-red-600/30 border border-red-500/40 -translate-x-1/2 -translate-y-1/2"></div>
-                <div className="w-4 h-4 rounded-full bg-red-500 shadow-[0_0_10px_#f44336] -translate-x-1/2 -translate-y-1/2"></div>
+                <div className="absolute inset-0 w-10 h-10 rounded-full bg-red-500/10 border border-red-500/30 -translate-x-1/2 -translate-y-1/2"></div>
+                <div className="w-2.5 h-2.5 rounded-full bg-red-500 -translate-x-1/2 -translate-y-1/2"></div>
               </div>
 
               <div className="absolute top-[65%] left-[28%] -translate-x-1/2 -translate-y-1/2">
-                <div className="absolute inset-0 w-16 h-16 rounded-full bg-amber-500/15 border-2 border-amber-500/40 -translate-x-1/2 -translate-y-1/2"></div>
-                <div className="w-3.5 h-3.5 rounded-full bg-amber-500 shadow-[0_0_8px_#ff9800] -translate-x-1/2 -translate-y-1/2"></div>
+                <div className="absolute inset-0 w-8 h-8 rounded-full bg-amber-500/10 border border-amber-500/30 -translate-x-1/2 -translate-y-1/2"></div>
+                <div className="w-2 h-2 rounded-full bg-amber-500 -translate-x-1/2 -translate-y-1/2"></div>
               </div>
 
               <div className="absolute top-[48%] left-[72%] -translate-x-1/2 -translate-y-1/2">
-                <div className="absolute inset-0 w-12 h-12 rounded-full bg-yellow-400/20 border border-yellow-400/50 -translate-x-1/2 -translate-y-1/2"></div>
-                <div className="w-3 h-3 rounded-full bg-yellow-400 shadow-[0_0_6px_#ffeb3b] -translate-x-1/2 -translate-y-1/2"></div>
+                <div className="absolute inset-0 w-6 h-6 rounded-full bg-yellow-400/10 border border-yellow-400/30 -translate-x-1/2 -translate-y-1/2"></div>
+                <div className="w-2 h-2 rounded-full bg-yellow-400 -translate-x-1/2 -translate-y-1/2"></div>
               </div>
 
               {/* Mini Overlay Map Label */}
@@ -367,11 +415,11 @@ export default function LandingPage() {
                         onClick={() => setActiveMockHotspot(idx)}
                         className={`absolute ${positions[idx]} p-3 rounded-lg border cursor-pointer transition-all duration-300 flex items-center gap-2 group ${
                           activeMockHotspot === idx 
-                            ? 'bg-[#7C5CFF]/20 border-[#7C5CFF] shadow-[0_0_15px_rgba(124,92,255,0.3)] scale-[1.05]' 
+                            ? 'bg-[#7C5CFF]/20 border-[#7C5CFF] scale-[1.05]' 
                             : 'bg-white/5 border-white/10 hover:border-white/20'
                         }`}
                       >
-                        <span className="w-2 h-2 rounded-full bg-[#ffeb3b] animate-pulse"></span>
+                        <span className="w-2 h-2 rounded-full bg-[#ffeb3b]"></span>
                         <div className="font-mono text-[9px]">
                           <div className="font-bold text-white">{hotspot.name}</div>
                           <div className="text-white/40">Delay: +{hotspot.delay}m</div>
@@ -409,7 +457,7 @@ export default function LandingPage() {
                       <span className="material-symbols-outlined text-primary text-[16px]">analytics</span>
                       <span className="text-[10px] font-bold uppercase tracking-widest text-white/50">Physics Inspector</span>
                     </div>
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
                   </div>
 
                   {activeMockHotspot !== null ? (
@@ -470,7 +518,7 @@ export default function LandingPage() {
             </p>
 
             <div className="mt-8 flex flex-wrap gap-4">
-              <Link href="/dashboard" className="bg-white text-[#7C5CFF] hover:bg-[#dfe0ff] hover:shadow-md hover:shadow-[#7C5CFF]/10 font-bold text-xs uppercase tracking-wider px-6 py-3.5 rounded-lg transition-all active:scale-[0.98]">
+              <Link href="/dashboard" className="bg-white text-[#7C5CFF] hover:bg-[#dfe0ff] font-bold text-xs uppercase tracking-wider px-6 py-3.5 rounded-[8px] transition-all active:scale-[0.98]">
                 Open Blindspot Radar
               </Link>
             </div>
@@ -490,7 +538,7 @@ export default function LandingPage() {
           </div>
 
           <div className="flex gap-8 text-xs font-semibold text-[#c5c5d9] font-mono">
-            <a href="#how-it-works" className="hover:text-white transition-colors">How It Works</a>
+            <a href="#how-it-works" onClick={(e) => handleScrollTo(e, 'how-it-works')} className="hover:text-white transition-colors">How It Works</a>
             <Link href="/dashboard" className="hover:text-white transition-colors">Live Demo</Link>
             <a href="https://github.com/Drifting-Moon/locklock" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">GitHub</a>
           </div>
