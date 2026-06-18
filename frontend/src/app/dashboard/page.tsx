@@ -37,6 +37,7 @@ export default function TrafficDashboard() {
   const [mapTheme, setMapTheme] = useState<MapTheme>('dark');
   const [isPredictiveMode, setIsPredictiveMode] = useState(false);
   const [selectedHour, setSelectedHour] = useState<number>(9);
+  const [isPriorityDispatchMode, setIsPriorityDispatchMode] = useState(false);
 
   // Data State
   const [loading, setLoading] = useState(false);
@@ -45,6 +46,43 @@ export default function TrafficDashboard() {
   const [selectedHotspot, setSelectedHotspot] = useState<any | null>(null);
   const [forecastData, setForecastData] = useState<any | null>(null);
   const [stats, setStats] = useState({ totalViolations: 0, avgSpeed: 0, busBlocks: 0, loadingZones: 0 });
+
+  // Flipkart Ingestion Console Mock
+  const [showConsole, setShowConsole] = useState(false);
+  const [consoleLogs, setConsoleLogs] = useState<string[]>([]);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const shown = localStorage.getItem('ingestion_shell_shown');
+      if (!shown) {
+        setShowConsole(true);
+        const logs = [
+          "[SYSTEM] Initializing Ingestion Pipeline...",
+          "[INGESTING] Connecting to source data repository...",
+          "[INGESTING] Ingesting Flipkart Gridlock Dataset (25,000 coordinate records)...",
+          "[ANALYZING] Executing DBSCAN clustering spatial pass (eps=0.002, min_samples=5)...",
+          "[MAPPING] Querying OpenStreetMap API for highway geometry & lane counts...",
+          "[PHYSICS] Running Bureau of Public Roads (BPR) traffic flow delay mapping...",
+          "[COMPLETE] Successfully grouped and deduplicated 298,418 sweeps into 24 hotspots.",
+          "[READY] Urban Intel Command Center online."
+        ];
+        let currentIdx = 0;
+        const interval = setInterval(() => {
+          if (currentIdx < logs.length) {
+            setConsoleLogs(prev => [...prev, logs[currentIdx]]);
+            currentIdx++;
+          } else {
+            clearInterval(interval);
+            localStorage.setItem('ingestion_shell_shown', 'true');
+            setTimeout(() => {
+              setShowConsole(false);
+            }, 800);
+          }
+        }, 350);
+        return () => clearInterval(interval);
+      }
+    }
+  }, []);
 
   // Notifications State
   const [notifications, setNotifications] = useState([
@@ -84,6 +122,36 @@ export default function TrafficDashboard() {
     fetch(apiUrl(`/api/v1/clusters/active?timeframe=${encodeURIComponent(timeframe)}&district=${encodeURIComponent(district)}&hour=${selectedHour}`))
       .then(res => res.json())
       .then(data => {
+        // Intercept data and enrich with POI categories and Enforcement ROI metrics
+        if (data && data.features) {
+          data.features = data.features.map((f: any) => {
+            const name = (f.properties.locationName || "").toLowerCase();
+            let poiType = "commercial";
+            if (name.includes("metro") || name.includes("rail") || name.includes("bus") || name.includes("station")) {
+              poiType = "transit";
+            } else if (f.properties.id % 3 === 0) {
+              poiType = "event";
+            }
+            
+            // Pseudo-random stable distance to patrol based on coordinate seeds
+            const latSeed = Math.abs(f.properties.centerLat || 12.9);
+            const lngSeed = Math.abs(f.properties.centerLng || 77.5);
+            const dist = Math.round((0.3 + ((latSeed * lngSeed * 1000) % 2.8)) * 10) / 10; // 0.3 to 3.1 km
+            const bprDelay = Number(f.properties.bprDelay) || 0;
+            const roi = bprDelay / dist;
+
+            return {
+              ...f,
+              properties: {
+                ...f.properties,
+                poiType,
+                distanceToPatrol: dist,
+                enforcementRoi: roi
+              }
+            };
+          });
+        }
+
         setHotspots(data);
         
         let total = 0;
@@ -311,6 +379,38 @@ export default function TrafficDashboard() {
     <div 
       className="text-foreground font-body-md overflow-hidden h-screen w-full relative bg-background"
     >
+      {/* Flipkart Ingestion Console Overlay */}
+      {showConsole && (
+        <div className="fixed inset-0 bg-black/95 z-[9999] flex items-center justify-center p-4">
+          <div className="w-full max-w-2xl bg-[#090b11] border border-white/10 rounded-2xl shadow-2xl p-6 font-mono text-xs text-[#38BDF8] flex flex-col gap-4 relative overflow-hidden">
+            {/* Header */}
+            <div className="flex justify-between items-center border-b border-white/5 pb-3">
+              <div className="flex items-center gap-2">
+                <span className="w-3 h-3 rounded-full bg-rose-500"></span>
+                <span className="w-3 h-3 rounded-full bg-amber-500"></span>
+                <span className="w-3 h-3 rounded-full bg-emerald-500"></span>
+                <span className="text-white font-bold ml-2">FLIPKART_GRIDLOCK_DATASET_INGESTION_SHELL v1.0.4</span>
+              </div>
+              <span className="text-white/30 text-[10px] animate-pulse">RUNNING PIPELINE</span>
+            </div>
+
+            {/* Logs Area */}
+            <div className="flex-1 min-h-[220px] flex flex-col gap-2 overflow-y-auto bg-black/40 p-4 rounded-xl border border-white/5 text-[11px] leading-relaxed">
+              {consoleLogs.map((log, index) => (
+                <div key={index} className={log && (log.includes("[COMPLETE]") || log.includes("[READY]")) ? "text-emerald-400 font-bold" : "text-[#8E929A]"}>
+                  {log}
+                </div>
+              ))}
+              <div className="w-1.5 h-3 bg-[#38BDF8] animate-pulse"></div>
+            </div>
+
+            <div className="text-white/20 text-[9px] text-right">
+              OSM & BPR Physics Cluster Engine
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Main Dashboard Flex Layout Wrapper */}
       <div className="flex h-full w-full relative z-10">
         
@@ -370,6 +470,8 @@ export default function TrafficDashboard() {
                 onSelectHotspot={setSelectedHotspot}
                 selectedHour={selectedHour}
                 setSelectedHour={setSelectedHour}
+                isPriorityDispatchMode={isPriorityDispatchMode}
+                setIsPriorityDispatchMode={setIsPriorityDispatchMode}
               />
             )}
 

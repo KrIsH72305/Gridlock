@@ -11,6 +11,9 @@ interface SelectedHotspot {
   highwayType: string;
   capacityLoss: number;
   bprDelay: number;
+  poiType?: string;
+  distanceToPatrol?: number;
+  enforcementRoi?: number;
 }
 
 interface PhysicsInspectorProps {
@@ -78,6 +81,30 @@ export default function PhysicsInspector({ hotspot, onClose }: PhysicsInspectorP
           </div>
           <h4 className="font-bold text-base text-foreground">{hotspot.locationName}</h4>
           <p className="text-xs text-muted mt-1">Jurisdiction: {hotspot.policeStation} Division</p>
+        </div>
+
+        {/* Section 1.5: Flipkart Enforcement Context */}
+        <div className="bg-background rounded-xl p-4 border border-border">
+          <div className="flex items-center gap-2 text-muted font-bold text-[10px] tracking-wider uppercase mb-3">
+            <span className="material-symbols-outlined text-xs">local_police</span>
+            <span>Enforcement Context</span>
+          </div>
+          <div className="flex flex-col gap-2 font-mono text-xs">
+            <div className="flex justify-between">
+              <span className="text-muted">POI Type:</span>
+              <span className="text-foreground uppercase text-[10px] font-bold">
+                {hotspot.poiType === 'transit' ? '🚇 Transit Spillover' : hotspot.poiType === 'event' ? '🎟️ Event Arena' : '🛍️ Commercial Hub'}
+              </span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-muted">Nearest Patrol:</span>
+              <span className="text-foreground">{hotspot.distanceToPatrol ? `${hotspot.distanceToPatrol.toFixed(1)} km` : 'N/A'}</span>
+            </div>
+            <div className="flex justify-between font-bold">
+              <span className="text-muted">Clearance ROI:</span>
+              <span className="text-emerald-400 font-mono">{hotspot.enforcementRoi ? `${hotspot.enforcementRoi.toFixed(1)} min/km` : 'N/A'}</span>
+            </div>
+          </div>
         </div>
 
         {/* Section 2: OSM Source Data */}
