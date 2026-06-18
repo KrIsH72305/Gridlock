@@ -84,186 +84,121 @@ export default function LandingPage() {
     window.addEventListener('mousemove', handleMouseMove);
     canvas.addEventListener('mouseleave', handleMouseLeave);
 
-    // Grid nodes (traffic junctions)
-    const nodes: Array<{ x: number; y: number; originalX: number; originalY: number; id: number; color: string; size: number; pulse: number }> = [];
-    const nodeCount = Math.min(25, Math.floor((width * height) / 40000));
-    
-    for (let i = 0; i < nodeCount; i++) {
-      const rx = Math.random() * width;
-      const ry = Math.random() * height;
-      const severity = Math.random();
-      nodes.push({
-        id: i,
-        x: rx,
-        y: ry,
-        originalX: rx,
-        originalY: ry,
-        size: 3 + Math.random() * 5,
-        pulse: Math.random() * Math.PI,
-        color: severity > 0.7 ? '#EF4444' : severity > 0.4 ? '#F59E0B' : '#10B981'
-      });
-    }
-
-    // Lanes (connecting nodes)
-    const links: Array<{ from: number; to: number; dist: number }> = [];
-    for (let i = 0; i < nodes.length; i++) {
-      // Connect each node to nearest 2-3 nodes
-      const distances = nodes
-        .map((n, idx) => ({ idx, dist: Math.hypot(n.x - nodes[i].x, n.y - nodes[i].y) }))
-        .filter(d => d.idx !== i)
-        .sort((a, b) => a.dist - b.dist);
-      
-      const connections = Math.min(2 + Math.floor(Math.random() * 2), distances.length);
-      for (let c = 0; c < connections; c++) {
-        const dest = distances[c].idx;
-        // Avoid duplicate links
-        if (!links.some(l => (l.from === i && l.to === dest) || (l.from === dest && l.to === i))) {
-          links.push({ from: i, to: dest, dist: distances[c].dist });
-        }
-      }
-    }
-
-    // Vehicle particles flowing along lanes
-    const vehicles: Array<{
-      linkIdx: number;
-      progress: number; // 0 to 1
+    // Smooth flowing particles configuration
+    const particles: Array<{
+      x: number;
+      y: number;
       speed: number;
       size: number;
+      angle: number;
       color: string;
-      direction: number; // 1 or -1
+      trail: Array<{ x: number; y: number }>;
     }> = [];
 
-    const spawnVehicle = (linkIdx: number) => {
-      const link = links[linkIdx];
-      const speed = (0.2 + Math.random() * 0.8) / (link.dist * 0.05); // slower on longer links
-      vehicles.push({
-        linkIdx,
-        progress: Math.random(),
-        speed: Math.max(0.001, Math.min(0.015, speed)),
-        size: 1.5 + Math.random() * 2,
-        color: Math.random() > 0.5 ? '#38BDF8' : '#7C5CFF',
-        direction: Math.random() > 0.5 ? 1 : -1
+    const particleCount = 80;
+    for (let i = 0; i < particleCount; i++) {
+      particles.push({
+        x: Math.random() * width,
+        y: Math.random() * height,
+        speed: 0.5 + Math.random() * 1.5,
+        size: 1 + Math.random() * 2,
+        angle: Math.random() * Math.PI * 2,
+        color: Math.random() > 0.4 ? '#38BDF8' : '#7C5CFF',
+        trail: []
       });
-    };
-
-    // Initial vehicle spawn
-    for (let i = 0; i < links.length * 3; i++) {
-      spawnVehicle(Math.floor(Math.random() * links.length));
     }
 
     const animate = () => {
-      ctx.clearRect(0, 0, width, height);
-
-      // Radial background sweep
-      const gradient = ctx.createRadialGradient(
-        width / 2, height / 2, 50,
-        width / 2, height / 2, Math.max(width, height)
-      );
-      gradient.addColorStop(0, '#0a0d1e');
-      gradient.addColorStop(1, '#05070f');
-      ctx.fillStyle = gradient;
+      // Clear background with translucent black to allow particles to leave glowing trails
+      ctx.fillStyle = 'rgba(5, 7, 15, 0.15)';
       ctx.fillRect(0, 0, width, height);
 
-      // Drawing lanes
-      ctx.strokeStyle = 'rgba(124, 92, 255, 0.08)';
-      ctx.lineWidth = 1.5;
-      links.forEach(link => {
-        const fromNode = nodes[link.from];
-        const toNode = nodes[link.to];
+      // Faint ambient grid background
+      ctx.strokeStyle = 'rgba(124, 92, 255, 0.015)';
+      ctx.lineWidth = 1;
+      const gridSize = 64;
+      for (let x = 0; x < width; x += gridSize) {
         ctx.beginPath();
-        ctx.moveTo(fromNode.x, fromNode.y);
-        ctx.lineTo(toNode.x, toNode.y);
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, height);
         ctx.stroke();
-      });
+      }
+      for (let y = 0; y < height; y += gridSize) {
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(width, y);
+        ctx.stroke();
+      }
 
-      // Update & Draw vehicles
-      vehicles.forEach((v, idx) => {
-        const link = links[v.linkIdx];
-        const fromNode = nodes[link.from];
-        const toNode = nodes[link.to];
-
-        v.progress += v.speed * v.direction;
-        if (v.progress > 1) {
-          v.progress = 0;
-        } else if (v.progress < 0) {
-          v.progress = 1;
+      // Update & Draw Flow Particles
+      particles.forEach(p => {
+        // Smooth trig field coordinates to guide particle angle
+        p.angle += Math.sin(p.x * 0.003) * Math.cos(p.y * 0.003) * 0.04;
+        
+        // Mouse gravity pull (curves particles towards the cursor)
+        const dx = p.x - mouseRef.current.x;
+        const dy = p.y - mouseRef.current.y;
+        const dist = Math.hypot(dx, dy);
+        if (dist < mouseRef.current.radius) {
+          const force = (mouseRef.current.radius - dist) / mouseRef.current.radius;
+          const angleToMouse = Math.atan2(dy, dx) + Math.PI / 2;
+          p.angle += (angleToMouse - p.angle) * force * 0.1;
+          p.speed = 2.0; // accelerate
+        } else {
+          p.speed = Math.max(0.5, p.speed - 0.05); // slow down back to normal
         }
 
-        // Interpolated position
-        const vx = fromNode.x + (toNode.x - fromNode.x) * v.progress;
-        const vy = fromNode.y + (toNode.y - fromNode.y) * v.progress;
+        p.x += Math.cos(p.angle) * p.speed;
+        p.y += Math.sin(p.angle) * p.speed;
 
-        // Interaction with mouse (warden dispatch clears / speeds up traffic)
-        const dx = vx - mouseRef.current.x;
-        const dy = vy - mouseRef.current.y;
-        const distToMouse = Math.hypot(dx, dy);
-        let currentSize = v.size;
-        let currentColor = v.color;
+        // Wrapping boundaries
+        if (p.x < 0) { p.x = width; p.trail = []; }
+        if (p.x > width) { p.x = 0; p.trail = []; }
+        if (p.y < 0) { p.y = height; p.trail = []; }
+        if (p.y > height) { p.y = 0; p.trail = []; }
 
-        if (distToMouse < mouseRef.current.radius) {
-          // Accelerate vehicles near mouse
-          v.progress += v.speed * v.direction * 1.8;
-          currentColor = '#10B981'; // Green lights showing optimal flow
-          currentSize = v.size * 1.5;
-          
-          // Draw connecting signal ray to cursor
-          ctx.strokeStyle = 'rgba(16, 185, 129, 0.05)';
+        // Manage particle trail
+        p.trail.push({ x: p.x, y: p.y });
+        if (p.trail.length > 8) p.trail.shift();
+
+        // Draw trail lines
+        if (p.trail.length > 1) {
           ctx.beginPath();
-          ctx.moveTo(vx, vy);
-          ctx.lineTo(mouseRef.current.x, mouseRef.current.y);
+          ctx.moveTo(p.trail[0].x, p.trail[0].y);
+          for (let t = 1; t < p.trail.length; t++) {
+            ctx.lineTo(p.trail[t].x, p.trail[t].y);
+          }
+          ctx.strokeStyle = p.color === '#38BDF8' ? 'rgba(56, 189, 248, 0.25)' : 'rgba(124, 92, 255, 0.25)';
+          ctx.lineWidth = p.size;
           ctx.stroke();
         }
 
-        ctx.fillStyle = currentColor;
+        // Draw glowing particle node
+        ctx.fillStyle = p.color;
         ctx.shadowBlur = 4;
-        ctx.shadowColor = currentColor;
+        ctx.shadowColor = p.color;
         ctx.beginPath();
-        ctx.arc(vx, vy, currentSize, 0, Math.PI * 2);
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
         ctx.fill();
-        ctx.shadowBlur = 0; // reset
+        ctx.shadowBlur = 0; // reset shadow
       });
 
-      // Draw nodes (intersections)
-      nodes.forEach(node => {
-        node.pulse += 0.02;
-        const scale = 1 + Math.sin(node.pulse) * 0.25;
-        
-        // Node hover pull
-        const dx = node.x - mouseRef.current.x;
-        const dy = node.y - mouseRef.current.y;
-        const distToMouse = Math.hypot(dx, dy);
-        
-        if (distToMouse < mouseRef.current.radius) {
-          node.x = node.originalX - (dx / distToMouse) * 10;
-          node.y = node.originalY - (dy / distToMouse) * 10;
-        } else {
-          node.x += (node.originalX - node.x) * 0.1;
-          node.y += (node.originalY - node.y) * 0.1;
+      // Draw faint connections between adjacent particles (Constellation grid)
+      for (let i = 0; i < particles.length; i++) {
+        for (let j = i + 1; j < particles.length; j++) {
+          const p1 = particles[i];
+          const p2 = particles[j];
+          const dist = Math.hypot(p2.x - p1.x, p2.y - p1.y);
+          if (dist < 75) {
+            ctx.beginPath();
+            ctx.moveTo(p1.x, p1.y);
+            ctx.lineTo(p2.x, p2.y);
+            ctx.strokeStyle = `rgba(124, 92, 255, ${0.08 * (1 - dist / 75)})`;
+            ctx.lineWidth = 0.5;
+            ctx.stroke();
+          }
         }
-
-        // Glowing outer ring
-        ctx.fillStyle = node.color;
-        ctx.globalAlpha = 0.15;
-        ctx.beginPath();
-        ctx.arc(node.x, node.y, node.size * 3 * scale, 0, Math.PI * 2);
-        ctx.fill();
-
-        ctx.globalAlpha = 1.0;
-        ctx.beginPath();
-        ctx.arc(node.x, node.y, node.size * scale, 0, Math.PI * 2);
-        ctx.fill();
-      });
-
-      // Ambient top & bottom glows
-      ctx.fillStyle = 'rgba(124, 92, 255, 0.06)';
-      ctx.beginPath();
-      ctx.arc(width * 0.8, height * 0.2, 350, 0, Math.PI * 2);
-      ctx.fill();
-
-      ctx.fillStyle = 'rgba(56, 189, 248, 0.05)';
-      ctx.beginPath();
-      ctx.arc(width * 0.1, height * 0.8, 300, 0, Math.PI * 2);
-      ctx.fill();
+      }
 
       animationId = requestAnimationFrame(animate);
     };
@@ -476,13 +411,13 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Physics Sandbox Section */}
-      <section id="simulator" className="relative z-10 py-20 bg-[#070913] border-t border-[#7C5CFF]/10">
+      {/* Physics Sandbox Section (Opaque White Background) */}
+      <section id="simulator" className="relative z-10 py-24 bg-white text-slate-900 border-t border-slate-200">
         <div className="max-w-6xl mx-auto px-6">
           <div className="text-center mb-16">
-            <span className="text-xs font-mono font-extrabold uppercase tracking-widest text-[#38BDF8] bg-[#38BDF8]/10 px-3 py-1.5 rounded-full">Interactive Sandbox</span>
-            <h2 className="text-3xl md:text-5xl font-extrabold text-white tracking-tight mt-4">The Mathematics of Traffic Delay</h2>
-            <p className="text-slate-300 mt-3 max-w-xl mx-auto text-sm md:text-base font-light">
+            <span className="text-xs font-mono font-extrabold uppercase tracking-widest text-[#7C5CFF] bg-[#7C5CFF]/10 px-3 py-1.5 rounded-full">Interactive Sandbox</span>
+            <h2 className="text-3xl md:text-5xl font-extrabold text-slate-900 tracking-tight mt-4 font-sans">The Mathematics of Traffic Delay</h2>
+            <p className="text-slate-600 mt-3 max-w-xl mx-auto text-sm md:text-base font-light">
               Slide the parameters below to see how physical lane blockage forces the Volume/Capacity (V/C) ratio up, triggering exponential delay minutes via the BPR formulation.
             </p>
           </div>
@@ -490,18 +425,18 @@ export default function LandingPage() {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
             
             {/* Control Panel */}
-            <div className="lg:col-span-5 bg-[#0e122b]/80 backdrop-blur-xl border border-[#7C5CFF]/25 rounded-2xl p-6 flex flex-col justify-between">
+            <div className="lg:col-span-5 bg-slate-50 border border-slate-200 rounded-2xl p-6 flex flex-col justify-between shadow-sm">
               <div className="space-y-6">
-                <h3 className="text-lg font-bold text-white flex items-center gap-2">
-                  <span className="material-symbols-outlined text-[#38BDF8]">tune</span>
+                <h3 className="text-lg font-bold text-slate-950 flex items-center gap-2">
+                  <span className="material-symbols-outlined text-[#7C5CFF]">tune</span>
                   Parameter Tuning
                 </h3>
 
                 {/* Parameter 1 */}
                 <div className="space-y-2">
                   <div className="flex justify-between text-xs font-mono">
-                    <span className="text-slate-300">Volume / Capacity Ratio (V/C)</span>
-                    <span className="text-[#38BDF8] font-bold">{volumeCapacity.toFixed(2)}x</span>
+                    <span className="text-slate-600">Volume / Capacity Ratio (V/C)</span>
+                    <span className="text-[#7C5CFF] font-bold">{volumeCapacity.toFixed(2)}x</span>
                   </div>
                   <input 
                     type="range" 
@@ -510,9 +445,9 @@ export default function LandingPage() {
                     step="0.05"
                     value={volumeCapacity} 
                     onChange={(e) => setVolumeCapacity(parseFloat(e.target.value))}
-                    className="w-full accent-[#38BDF8] bg-slate-800 h-2 rounded-lg cursor-pointer"
+                    className="w-full accent-[#7C5CFF] bg-slate-200 h-2 rounded-lg cursor-pointer outline-none"
                   />
-                  <div className="flex justify-between text-[10px] text-slate-400 font-mono">
+                  <div className="flex justify-between text-[10px] text-slate-500 font-mono">
                     <span>0.50 (Empty Road)</span>
                     <span>1.00 (At Capacity)</span>
                     <span>2.50 (Deadlock)</span>
@@ -522,7 +457,7 @@ export default function LandingPage() {
                 {/* Parameter 2 */}
                 <div className="space-y-2">
                   <div className="flex justify-between text-xs font-mono">
-                    <span className="text-slate-300">Free Flow Travel Time (t₀)</span>
+                    <span className="text-slate-600">Free Flow Travel Time (t₀)</span>
                     <span className="text-[#7C5CFF] font-bold">{freeFlowTime} Minutes</span>
                   </div>
                   <input 
@@ -532,59 +467,59 @@ export default function LandingPage() {
                     step="1"
                     value={freeFlowTime} 
                     onChange={(e) => setFreeFlowTime(parseInt(e.target.value))}
-                    className="w-full accent-[#7C5CFF] bg-slate-800 h-2 rounded-lg cursor-pointer"
+                    className="w-full accent-[#7C5CFF] bg-slate-200 h-2 rounded-lg cursor-pointer outline-none"
                   />
                 </div>
 
                 {/* Math Breakdown */}
-                <div className="bg-black/30 rounded-xl p-4 border border-white/5 font-mono text-xs text-slate-300 space-y-2">
-                  <div className="text-slate-400 font-bold uppercase text-[9px]">Variables:</div>
+                <div className="bg-slate-100/80 rounded-xl p-4 border border-slate-200 font-mono text-xs text-slate-700 space-y-2">
+                  <div className="text-slate-500 font-bold uppercase text-[9px]">Variables:</div>
                   <div className="flex justify-between"><span>Alpha (Sensitivity):</span> <span>{alpha}</span></div>
                   <div className="flex justify-between"><span>Beta (Power Exponent):</span> <span>{beta}</span></div>
-                  <div className="pt-2 border-t border-white/5 flex justify-between font-bold text-white">
+                  <div className="pt-2 border-t border-slate-200 flex justify-between font-bold text-slate-900">
                     <span>Formula:</span>
                     <span>t₀ × [ 1 + 0.15 × (V/C)⁴ ]</span>
                   </div>
                 </div>
               </div>
 
-              <div className="text-xs text-slate-400 mt-6 pt-4 border-t border-white/5 font-light">
+              <div className="text-xs text-slate-500 mt-6 pt-4 border-t border-slate-200 font-light">
                 Note: When \(V/C &gt; 1.0\), delays scale rapidly due to the 4th-power exponent representing breakdown flow physics.
               </div>
             </div>
 
             {/* Results Graphic */}
-            <div className="lg:col-span-7 bg-[#0b0d1e]/90 border border-white/10 rounded-2xl p-6 flex flex-col justify-between">
+            <div className="lg:col-span-7 bg-slate-50 border border-slate-200 rounded-2xl p-6 flex flex-col justify-between shadow-sm">
               <div>
-                <h3 className="text-lg font-bold text-white flex items-center justify-between">
+                <h3 className="text-lg font-bold text-slate-950 flex items-center justify-between">
                   <span>Calculated Delay Output</span>
-                  <span className="font-mono text-rose-400 text-2xl font-black">+{delayMinutes.toFixed(1)}m</span>
+                  <span className="font-mono text-rose-600 text-2xl font-black">+{delayMinutes.toFixed(1)}m</span>
                 </h3>
-                <div className="w-12 h-1 bg-[#38BDF8] rounded-full mt-2 mb-6"></div>
+                <div className="w-12 h-1 bg-[#7C5CFF] rounded-full mt-2 mb-6"></div>
 
                 <div className="space-y-6">
                   {/* Visual Bar representation */}
                   <div className="space-y-2">
-                    <span className="text-xs text-slate-400 font-mono">Travel Time Comparison</span>
+                    <span className="text-xs text-slate-500 font-mono">Travel Time Comparison</span>
                     
                     {/* Baseline */}
                     <div className="space-y-1">
-                      <div className="flex justify-between text-[10px] text-slate-400">
+                      <div className="flex justify-between text-[10px] text-slate-500">
                         <span>Baseline (No Parking Obstructions)</span>
                         <span>{freeFlowTime} mins</span>
                       </div>
-                      <div className="w-full bg-white/5 h-4 rounded-md overflow-hidden relative border border-white/5">
-                        <div className="bg-[#7C5CFF] h-full rounded-md" style={{ width: '40%' }}></div>
+                      <div className="w-full bg-slate-200 h-4 rounded-md overflow-hidden relative">
+                        <div className="bg-[#7C5CFF]/75 h-full rounded-md" style={{ width: '40%' }}></div>
                       </div>
                     </div>
 
                     {/* Degraded */}
                     <div className="space-y-1">
-                      <div className="flex justify-between text-[10px] text-rose-300">
+                      <div className="flex justify-between text-[10px] text-rose-600 font-semibold">
                         <span>Current Active Travel Time</span>
                         <span>{calculatedTime.toFixed(1)} mins</span>
                       </div>
-                      <div className="w-full bg-white/5 h-6 rounded-md overflow-hidden relative border border-[#7C5CFF]/30">
+                      <div className="w-full bg-slate-200 h-6 rounded-md overflow-hidden relative border border-[#7C5CFF]/30">
                         <div className="bg-gradient-to-r from-[#7C5CFF] via-rose-500 to-red-500 h-full rounded-md transition-all duration-300" style={{ width: `${Math.min(100, 40 + (delayMinutes / freeFlowTime) * 40)}%` }}></div>
                         <div className="absolute inset-y-0 right-3 flex items-center text-[10px] font-mono text-white font-bold">
                           +{delayMinutes.toFixed(1)} min Delay ({((calculatedTime / freeFlowTime) * 100 - 100).toFixed(0)}% slower)
@@ -595,15 +530,15 @@ export default function LandingPage() {
 
                   {/* Impact Summary */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="bg-[#10b981]/10 rounded-xl p-4 border border-[#10b981]/20">
-                      <h4 className="text-xs font-bold text-emerald-400 uppercase tracking-wide font-mono">Systemic Impact</h4>
-                      <p className="text-xs text-emerald-200/80 leading-relaxed mt-1">
-                        At a V/C of {volumeCapacity.toFixed(2)}, an officer ticketing vehicles offline won't restore speed. Commuters lose hours daily.
+                    <div className="bg-emerald-50 rounded-xl p-4 border border-emerald-200">
+                      <h4 className="text-xs font-bold text-emerald-800 uppercase tracking-wide font-mono">Systemic Impact</h4>
+                      <p className="text-xs text-emerald-700 leading-relaxed mt-1">
+                        At a V/C of {volumeCapacity.toFixed(2)}, ticketing vehicles offline won't restore speed. Commuters lose hours daily.
                       </p>
                     </div>
-                    <div className="bg-[#ff9800]/10 rounded-xl p-4 border border-[#ff9800]/20">
-                      <h4 className="text-xs font-bold text-amber-400 uppercase tracking-wide font-mono">Optimal Intervention</h4>
-                      <p className="text-xs text-amber-200/80 leading-relaxed mt-1">
+                    <div className="bg-amber-50 rounded-xl p-4 border border-amber-200">
+                      <h4 className="text-xs font-bold text-amber-800 uppercase tracking-wide font-mono">Optimal Intervention</h4>
+                      <p className="text-xs text-amber-700 leading-relaxed mt-1">
                         Dispatching a warden dynamically to clear {((volumeCapacity - 1) * 33).toFixed(0)}% of blockages would reduce delay minutes by {(delayMinutes * 0.75).toFixed(1)}m.
                       </p>
                     </div>
@@ -611,9 +546,9 @@ export default function LandingPage() {
                 </div>
               </div>
 
-              <div className="bg-white/5 rounded-xl p-4 border border-white/5 font-mono text-[10px] text-slate-400 mt-6 flex justify-between items-center">
+              <div className="bg-slate-100 rounded-xl p-4 border border-slate-200 font-mono text-[10px] text-slate-500 mt-6 flex justify-between items-center">
                 <span>Bureau of Public Roads Formulation (1964)</span>
-                <span className="text-[#38BDF8]">t = t₀(1 + 0.15·x⁴)</span>
+                <span className="text-[#7C5CFF] font-bold">t = t₀(1 + 0.15·x⁴)</span>
               </div>
             </div>
             
@@ -621,29 +556,29 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Comparison Matrix Section (Opaque Light Background) */}
-      <section id="comparison" className="relative z-10 py-24 bg-white text-slate-900 border-y border-slate-200">
+      {/* Comparison Matrix Section (Opaque Black Background) */}
+      <section id="comparison" className="relative z-10 py-24 bg-black text-white border-y border-zinc-800">
         <div className="max-w-6xl mx-auto px-6">
           <div className="text-center mb-16">
-            <span className="text-xs font-mono font-extrabold uppercase tracking-widest text-[#7C5CFF] bg-[#7C5CFF]/10 px-3 py-1.5 rounded-full">Comparison System</span>
-            <h2 className="text-3xl md:text-5xl font-extrabold text-slate-900 tracking-tight mt-4">Legacy Sweeps vs. Smart Command</h2>
-            <p className="text-slate-600 mt-3 text-sm md:text-base font-light">Understanding the paradigm shift in traffic resource allocation.</p>
+            <span className="text-xs font-mono font-extrabold uppercase tracking-widest text-[#38BDF8] bg-[#38BDF8]/10 px-3 py-1.5 rounded-full">Comparison System</span>
+            <h2 className="text-3xl md:text-5xl font-extrabold text-white tracking-tight mt-4">Legacy Sweeps vs. Smart Command</h2>
+            <p className="text-slate-300 mt-3 text-sm md:text-base font-light">Understanding the paradigm shift in traffic resource allocation.</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             
             {/* Card 1: Legacy */}
-            <div className="bg-slate-50 border border-slate-200 rounded-2xl p-6 relative overflow-hidden flex flex-col justify-between">
+            <div className="bg-[#0e122b]/85 border border-zinc-850 rounded-2xl p-6 relative overflow-hidden flex flex-col justify-between">
               <div>
-                <div className="flex justify-between items-center pb-4 border-b border-slate-200 mb-6">
-                  <h3 className="text-lg font-bold text-slate-800 flex items-center gap-2">
+                <div className="flex justify-between items-center pb-4 border-b border-zinc-800 mb-6">
+                  <h3 className="text-lg font-bold text-slate-300 flex items-center gap-2">
                     <span className="material-symbols-outlined text-rose-500">lock_open</span>
                     Legacy Enforcement
                   </h3>
                   <span className="text-[10px] font-mono text-rose-500 font-bold bg-rose-500/10 px-2.5 py-1 rounded-full uppercase">Inefficient Loop</span>
                 </div>
 
-                <ul className="space-y-4 text-xs text-slate-600">
+                <ul className="space-y-4 text-xs text-slate-400">
                   <li className="flex items-start gap-2.5">
                     <span className="material-symbols-outlined text-rose-500 text-sm mt-0.5">cancel</span>
                     <span><strong>Officer Ticket Spam:</strong> Officers write multiple tickets to vehicles parked close together, inflating stats without solving capacity flow.</span>
@@ -659,7 +594,7 @@ export default function LandingPage() {
                 </ul>
               </div>
               
-              <div className="mt-8 pt-4 border-t border-slate-200 text-[10px] text-slate-500 font-mono">
+              <div className="mt-8 pt-4 border-t border-zinc-800 text-[10px] text-slate-500 font-mono">
                 Result: Wasted patrol fuel & unmanaged commuter bottlenecks
               </div>
             </div>
@@ -704,68 +639,68 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Methodology Pipeline Section (Opaque Black Background) */}
-      <section id="how-it-works" className="relative z-10 py-24 bg-black text-white">
+      {/* Methodology Pipeline Section (Opaque White Background) */}
+      <section id="how-it-works" className="relative z-10 py-24 bg-white text-slate-900 border-b border-slate-200">
         <div className="max-w-6xl mx-auto px-6">
           <div className="text-center mb-16">
-            <span className="text-xs font-mono font-extrabold uppercase tracking-widest text-[#38BDF8] bg-[#38BDF8]/10 px-3 py-1.5 rounded-full">Methodology</span>
-            <h2 className="text-3xl md:text-5xl font-extrabold text-white tracking-tight mt-4">The 4-Step Pipeline</h2>
-            <p className="text-slate-300 mt-3 text-sm md:text-base font-light">From raw ticketing sweeps to physics-grounded commute-delay mapping.</p>
+            <span className="text-xs font-mono font-extrabold uppercase tracking-widest text-[#7C5CFF] bg-[#7C5CFF]/10 px-3 py-1.5 rounded-full">Methodology</span>
+            <h2 className="text-3xl md:text-5xl font-extrabold text-slate-900 tracking-tight mt-4">The 4-Step Pipeline</h2>
+            <p className="text-slate-600 mt-3 text-sm md:text-base font-light">From raw ticketing sweeps to physics-grounded commute-delay mapping.</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             
             {/* Card 1 */}
-            <div className="bg-[#7C5CFF]/10 border border-[#7C5CFF]/20 hover:border-[#7C5CFF]/60 text-white rounded-2xl p-6 shadow-xl relative flex flex-col justify-between h-72 transition-all duration-300">
+            <div className="bg-slate-50 border border-slate-200 hover:border-[#7C5CFF]/50 text-slate-900 rounded-2xl p-6 shadow-sm relative flex flex-col justify-between h-72 transition-all duration-300">
               <div className="flex justify-between items-start">
-                <div className="w-10 h-10 rounded-full bg-[#7C5CFF]/25 flex items-center justify-center font-mono font-black text-lg text-[#a78bfa] border border-[#7C5CFF]/30">01</div>
-                <span className="material-symbols-outlined text-[#a78bfa] text-[24px]">filter_alt</span>
+                <div className="w-10 h-10 rounded-full bg-[#7C5CFF]/10 flex items-center justify-center font-mono font-black text-lg text-[#7C5CFF] border border-[#7C5CFF]/20">01</div>
+                <span className="material-symbols-outlined text-[#7C5CFF] text-[24px]">filter_alt</span>
               </div>
               <div>
-                <h3 className="text-lg font-bold tracking-tight mb-2 text-white">Deduplicate</h3>
-                <p className="text-slate-300 text-xs leading-relaxed font-light">
+                <h3 className="text-lg font-bold tracking-tight mb-2 text-slate-900">Deduplicate</h3>
+                <p className="text-slate-600 text-xs leading-relaxed font-light">
                   Sweep deduplication collapses officer ticket-spam (occurring within 15 minutes and 50 meters of a single device ID) into real events, filtering 298k records to 125k.
                 </p>
               </div>
             </div>
 
             {/* Card 2 */}
-            <div className="bg-[#7C5CFF]/10 border border-[#7C5CFF]/20 hover:border-[#7C5CFF]/60 text-white rounded-2xl p-6 shadow-xl relative flex flex-col justify-between h-72 transition-all duration-300">
+            <div className="bg-slate-50 border border-slate-200 hover:border-[#7C5CFF]/50 text-slate-900 rounded-2xl p-6 shadow-sm relative flex flex-col justify-between h-72 transition-all duration-300">
               <div className="flex justify-between items-start">
-                <div className="w-10 h-10 rounded-full bg-[#7C5CFF]/25 flex items-center justify-center font-mono font-black text-lg text-[#a78bfa] border border-[#7C5CFF]/30">02</div>
-                <span className="material-symbols-outlined text-[#a78bfa] text-[24px]">group_work</span>
+                <div className="w-10 h-10 rounded-full bg-[#7C5CFF]/10 flex items-center justify-center font-mono font-black text-lg text-[#7C5CFF] border border-[#7C5CFF]/20">02</div>
+                <span className="material-symbols-outlined text-[#7C5CFF] text-[24px]">group_work</span>
               </div>
               <div>
-                <h3 className="text-lg font-bold tracking-tight mb-2 text-white">Cluster</h3>
-                <p className="text-slate-300 text-xs leading-relaxed font-light">
+                <h3 className="text-lg font-bold tracking-tight mb-2 text-slate-900">Cluster</h3>
+                <p className="text-slate-600 text-xs leading-relaxed font-light">
                   DBSCAN spatial clustering groups nearby parking violations to extract true congestion hotspots and shapes boundaries using geometric convex hulls.
                 </p>
               </div>
             </div>
 
             {/* Card 3 */}
-            <div className="bg-[#7C5CFF]/10 border border-[#7C5CFF]/20 hover:border-[#7C5CFF]/60 text-white rounded-2xl p-6 shadow-xl relative flex flex-col justify-between h-72 transition-all duration-300">
+            <div className="bg-slate-50 border border-slate-200 hover:border-[#7C5CFF]/50 text-slate-900 rounded-2xl p-6 shadow-sm relative flex flex-col justify-between h-72 transition-all duration-300">
               <div className="flex justify-between items-start">
-                <div className="w-10 h-10 rounded-full bg-[#7C5CFF]/25 flex items-center justify-center font-mono font-black text-lg text-[#a78bfa] border border-[#7C5CFF]/30">03</div>
-                <span className="material-symbols-outlined text-[#a78bfa] text-[24px]">map</span>
+                <div className="w-10 h-10 rounded-full bg-[#7C5CFF]/10 flex items-center justify-center font-mono font-black text-lg text-[#7C5CFF] border border-[#7C5CFF]/20">03</div>
+                <span className="material-symbols-outlined text-[#7C5CFF] text-[24px]">map</span>
               </div>
               <div>
-                <h3 className="text-lg font-bold tracking-tight mb-2 text-white">Ground Truth</h3>
-                <p className="text-slate-300 text-xs leading-relaxed font-light">
+                <h3 className="text-lg font-bold tracking-tight mb-2 text-slate-900">Ground Truth</h3>
+                <p className="text-slate-600 text-xs leading-relaxed font-light">
                   Hotspots are mapped against real OpenStreetMap road classes and actual lane counts, ensuring capacity formulas use real physical data.
                 </p>
               </div>
             </div>
 
             {/* Card 4 */}
-            <div className="bg-[#7C5CFF]/10 border border-[#7C5CFF]/20 hover:border-[#7C5CFF]/60 text-white rounded-2xl p-6 shadow-xl relative flex flex-col justify-between h-72 transition-all duration-300">
+            <div className="bg-slate-50 border border-slate-200 hover:border-[#7C5CFF]/50 text-slate-900 rounded-2xl p-6 shadow-sm relative flex flex-col justify-between h-72 transition-all duration-300">
               <div className="flex justify-between items-start">
-                <div className="w-10 h-10 rounded-full bg-[#7C5CFF]/25 flex items-center justify-center font-mono font-black text-lg text-[#a78bfa] border border-[#7C5CFF]/30">04</div>
-                <span className="material-symbols-outlined text-[#a78bfa] text-[24px]">calculate</span>
+                <div className="w-10 h-10 rounded-full bg-[#7C5CFF]/10 flex items-center justify-center font-mono font-black text-lg text-[#7C5CFF] border border-[#7C5CFF]/20">04</div>
+                <span className="material-symbols-outlined text-[#7C5CFF] text-[24px]">calculate</span>
               </div>
               <div>
-                <h3 className="text-lg font-bold tracking-tight mb-2 text-white">Quantify</h3>
-                <p className="text-slate-300 text-xs leading-relaxed font-light">
+                <h3 className="text-lg font-bold tracking-tight mb-2 text-slate-900">Quantify</h3>
+                <p className="text-slate-600 text-xs leading-relaxed font-light">
                   The Bureau of Public Roads (BPR) traffic physics model converts capacity degradation into the exact minute-delay costs added to traffic streams.
                 </p>
               </div>
@@ -775,13 +710,13 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* FAQ Section (Opaque Light Background) */}
-      <section id="faq" className="relative z-10 py-24 bg-white text-slate-900 border-b border-slate-200">
+      {/* FAQ Section (Opaque Black Background) */}
+      <section id="faq" className="relative z-10 py-24 bg-black text-white border-b border-zinc-800">
         <div className="max-w-4xl mx-auto px-6">
           <div className="text-center mb-12">
             <span className="text-xs font-mono font-extrabold uppercase tracking-widest text-[#38BDF8] bg-[#38BDF8]/10 px-3 py-1.5 rounded-full">Questions & Answers</span>
-            <h2 className="text-3xl md:text-5xl font-extrabold text-slate-900 tracking-tight mt-4">Frequently Asked Questions</h2>
-            <p className="text-slate-600 mt-3 text-sm md:text-base font-light">Technical answers explaining the models powering Urban Intel.</p>
+            <h2 className="text-3xl md:text-5xl font-extrabold text-white tracking-tight mt-4">Frequently Asked Questions</h2>
+            <p className="text-slate-300 mt-3 text-sm md:text-base font-light">Technical answers explaining the models powering Urban Intel.</p>
           </div>
 
           <div className="space-y-4">
@@ -790,14 +725,14 @@ export default function LandingPage() {
               return (
                 <div 
                   key={idx} 
-                  className="bg-slate-50 border border-slate-200 rounded-2xl overflow-hidden transition-all duration-300 hover:border-[#7C5CFF]/40"
+                  className="bg-zinc-900/60 border border-zinc-800 rounded-2xl overflow-hidden transition-all duration-300 hover:border-[#7C5CFF]/40"
                 >
                   <button
                     onClick={() => toggleFaq(idx)}
                     className="w-full px-6 py-5 flex items-center justify-between text-left focus:outline-none"
                   >
-                    <span className="font-bold text-sm md:text-base text-slate-800 tracking-wide">{item.q}</span>
-                    <span className={`material-symbols-outlined text-[#7C5CFF] transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`}>
+                    <span className="font-bold text-sm md:text-base text-white tracking-wide">{item.q}</span>
+                    <span className={`material-symbols-outlined text-[#38BDF8] transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`}>
                       keyboard_arrow_down
                     </span>
                   </button>
@@ -806,7 +741,7 @@ export default function LandingPage() {
                       isOpen ? 'pb-6 max-h-40 opacity-100' : 'max-h-0 opacity-0'
                     }`}
                   >
-                    <p className="text-slate-600 text-xs md:text-sm leading-relaxed font-light border-t border-slate-200 pt-4">
+                    <p className="text-slate-300 text-xs md:text-sm leading-relaxed font-light border-t border-zinc-800 pt-4 font-light">
                       {item.a}
                     </p>
                   </div>
@@ -817,10 +752,10 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* High Contrast Callout banner (Opaque Dark Background) */}
-      <section className="relative z-10 py-24 bg-[#05070f] border-t border-[#7C5CFF]/10">
+      {/* High Contrast Callout banner (Opaque White Background) */}
+      <section className="relative z-10 py-24 bg-white border-t border-slate-200">
         <div className="max-w-5xl mx-auto px-6">
-          <div className="bg-gradient-to-r from-[#7C5CFF] to-[#38BDF8] rounded-3xl p-8 md:p-12 shadow-2xl relative overflow-hidden text-left">
+          <div className="bg-gradient-to-r from-[#7C5CFF] to-[#38BDF8] rounded-3xl p-8 md:p-12 shadow-xl relative overflow-hidden text-left">
             <div className="absolute right-0 top-0 bottom-0 w-1/3 opacity-10 pointer-events-none hidden md:block">
               <span className="material-symbols-outlined text-[300px] text-white absolute right-[-50px] top-1/2 -translate-y-1/2">radar</span>
             </div>
@@ -847,7 +782,7 @@ export default function LandingPage() {
       </section>
 
       {/* Footer (Opaque Dark Footer) */}
-      <footer className="bg-[#030409] border-t border-white/5 py-12 relative z-10">
+      <footer className="bg-black border-t border-zinc-900 py-12 relative z-10">
         <div className="max-w-6xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-6">
           <div className="flex flex-col items-center md:items-start gap-1">
             <div className="flex items-center gap-2">
