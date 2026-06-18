@@ -1,15 +1,45 @@
 "use client";
 import React, { useState, useEffect } from 'react';
+import { apiUrl } from '../lib/api';
+
+interface Stop {
+  id: string;
+  name: string;
+  lat: number;
+  lng: number;
+  routes_per_hour: number;
+}
+
+interface Violation {
+  id: string;
+  vehicle_id: string;
+  stop_name: string;
+  severity: number;
+  severity_badge: string;
+  cost_multiplier: number;
+  timestamp: string;
+}
+
+type DetectResult =
+  | { status: 'violation_detected'; violation: Violation & { distance_m: number } }
+  | { status: 'ignored'; reason: string };
 
 export default function DetectionTab() {
-  const [stops, setStops] = useState<any[]>([]);
-  const [violations, setViolations] = useState<any[]>([]);
+  const [stops, setStops] = useState<Stop[]>([]);
+  const [violations, setViolations] = useState<Violation[]>([]);
   const [pingForm, setPingForm] = useState({ vehicle_id: "KA-01-AB-1234", lat: "", lng: "", speed: "0" });
   const [loading, setLoading] = useState(false);
-  const [detectResult, setDetectResult] = useState<any>(null);
+  const [detectResult, setDetectResult] = useState<DetectResult | null>(null);
 
   useEffect(() => {
-    fetch('http://localhost:8000/api/stops')
+    const fetchViolations = () => {
+      fetch(apiUrl('/api/violations/active'))
+        .then(r => r.json())
+        .then(d => setViolations(d.violations || []))
+        .catch(console.error);
+    };
+
+    fetch(apiUrl('/api/stops'))
       .then(r => r.json())
       .then(d => {
         setStops(d.stops || []);
@@ -25,18 +55,11 @@ export default function DetectionTab() {
     return () => clearInterval(interval);
   }, []);
 
-  const fetchViolations = () => {
-    fetch('http://localhost:8000/api/violations/active')
-      .then(r => r.json())
-      .then(d => setViolations(d.violations || []))
-      .catch(console.error);
-  };
-
   const handleSimulate = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     try {
-      const res = await fetch('http://localhost:8000/api/detect', {
+      const res = await fetch(apiUrl('/api/detect'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -48,7 +71,8 @@ export default function DetectionTab() {
       });
       const data = await res.json();
       setDetectResult(data);
-      fetchViolations(); // Refresh queue immediately
+      const active = await fetch(apiUrl('/api/violations/active')).then(r => r.json());
+      setViolations(active.violations || []);
     } catch (err) {
       console.error("Detection failed", err);
     }
@@ -73,8 +97,8 @@ export default function DetectionTab() {
 
   const clearAllViolations = async () => {
     try {
-      await fetch('http://localhost:8000/api/violations/clear', { method: 'DELETE' });
-      fetchViolations();
+      await fetch(apiUrl('/api/violations/clear'), { method: 'DELETE' });
+      setViolations([]);
       setDetectResult(null);
     } catch (err) {
       console.error("Failed to clear", err);
@@ -89,7 +113,7 @@ export default function DetectionTab() {
       <div className="flex justify-between items-center mb-4">
         <div>
           <h2 className="font-headline-md text-3xl font-bold text-primary">Detection Engine</h2>
-          <p className="font-body-sm text-on-surface-variant">Live BMTC Bus Stop Encroachment AI</p>
+          <p className="font-body-sm text-on-surface-variant">BMTC bus-stop encroachment simulator with proximity scoring</p>
         </div>
       </div>
 
@@ -204,7 +228,7 @@ export default function DetectionTab() {
                     <tr>
                       <td colSpan={5} className="px-4 py-12 text-center text-on-surface-variant italic">No active bus stop encroachments logged. Try pinging a simulation.</td>
                     </tr>
-                  ) : violations.map((v: any) => (
+                  ) : violations.map((v) => (
                     <tr key={v.id} className="hover:bg-surface-container-high transition-colors group">
                       <td className="px-4 py-3 text-on-surface-variant whitespace-nowrap">{new Date(v.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', second:'2-digit'})}</td>
                       <td className="px-4 py-3 font-medium truncate max-w-[200px] text-white" title={v.stop_name}>{v.stop_name}</td>
@@ -241,11 +265,11 @@ export default function DetectionTab() {
              </div>
           </div>
 
-          {/* AI Formulas Explanation */}
+          {/* Detection Formulas Explanation */}
           <div className="bg-[#1e2025]/80 backdrop-blur-md border border-[#3e52ff]/20 rounded-xl p-4 shadow-lg mt-6">
             <h4 className="text-xs font-bold mb-3 flex items-center gap-2 text-[#a6e6ff] uppercase tracking-widest">
               <span className="material-symbols-outlined text-[16px]">calculate</span>
-              AI Detection Formulas
+              Detection Scoring Formulas
             </h4>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs text-white/70">
               <div className="bg-white/5 p-3 rounded-lg border border-white/10">

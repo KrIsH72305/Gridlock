@@ -1,67 +1,57 @@
-# 🚦 Urban Intelligence Platform | Flipkart Gridlock Hackathon
+# Urban Parking Impact Intelligence | Flipkart Gridlock Hackathon
 
-![Dashboard Preview](https://img.shields.io/badge/Status-Live_Prototype-success?style=for-the-badge) ![Tech Stack](https://img.shields.io/badge/Stack-Next.js%20%7C%20FastAPI%20%7C%20Pandas-blue?style=for-the-badge)
+A hackathon prototype for the prompt: **poor visibility on parking-induced congestion**. The app uses Bengaluru traffic violation records to identify illegal-parking hotspots, estimate their congestion impact, and rank enforcement targets for targeted action.
 
-A hyper-modern, AI-driven Command Center built to solve Bengaluru's traffic congestion crisis. This prototype leverages real **Bengaluru Traffic Police (BTP)** violation datasets to dynamically identify hotspots, calculate real-world economic damage, and automate the dispatch of BTP Interceptor tow trucks.
+## Problem
 
----
+Illegal and spillover parking near commercial areas, bus stops, main roads, metro stations, and event zones can reduce usable carriageway space and create local bottlenecks. Enforcement teams often know violations are happening, but lack a fast way to connect violation density with likely congestion impact.
 
-## 🎯 The Problem
-Illegal parking—specifically near critical BMTC Bus Stops and main road arterial routes—creates localized bottlenecks that cascade into massive, city-wide traffic gridlock. Traditional ticketing is reactive; the city needs a proactive engine that calculates the *financial impact* of a blockage to prioritize towing and enforcement.
+## What This Prototype Does
 
-## 🚀 The Solution
-This platform acts as the brain for traffic management. It ingests raw traffic violation data and translates it into actionable intelligence for city administrators and traffic wardens.
+- **Hotspot mapping:** Aggregates reported parking violations by location and renders density/severity on a Bengaluru map.
+- **Impact scoring:** Converts violation counts into a relative hotspot severity score for prioritization.
+- **Dispatch prioritization:** Ranks enforcement targets using violation count, location criticality, and estimated response time.
+- **Bus-stop encroachment simulation:** Tests GPS pings against dataset-derived hotspots using Haversine distance.
+- **Congestion cost sandbox:** Estimates delay and value-of-time loss for a blocked lane using configurable traffic assumptions.
 
-### ✨ Key Features
+## Data And Assumptions
 
-* **🗺️ Dynamic Hotspot Extraction:** 
-  Actively parses the BTP violation dataset to identify the worst offenders. It automatically filters for highly specific violations like `PARKING NEAR BUSTOP` and `PARKING IN A MAIN ROAD` to generate a live map of the city's most critical chokepoints.
+- Dataset: `data/jan to may police violation_anonymized791b166.csv`
+- Fields used include latitude, longitude, location, violation type, police station, vehicle type, timestamp, and junction name.
+- The hotspot and enforcement views are dataset-backed.
+- The detection tab is a simulator because the dataset does not include a live vehicle dwell stream.
+- Congestion cost is an estimate, not a measured ground-truth traffic-flow result.
 
-* **🛰️ Live Detection Engine (Haversine Proximity):**
-  A live simulation engine that accepts incoming vehicle GPS pings (mimicking Vahan API or ANPR cameras). It uses the **Haversine Formula** to calculate the exact distance (in meters) between the vehicle and known BMTC bus stop hotspots. If a vehicle is detected loitering within a 25-meter radius, it automatically flags a violation.
+## Tech Stack
 
-* **💰 AI Severity & Economic Cost Math:**
-  Not all parking tickets are equal. The AI engine grades each violation dynamically:
-  * **Severity Score (0-100):** Factored using physical proximity to the bus stop, loitering dwell time, and the bus route density (buses per hour).
-  * **Cost Impact (₹/hr):** Calculates the cascading economic loss to the city using the formula: `(Buses/hr × 65 Pax × Delay / 60) × ₹100 VoTT`.
+- Frontend: Next.js, React, MapLibre, Recharts
+- Backend: FastAPI, Pandas
+- Geospatial logic: Haversine distance for proximity checks
 
-* **🚓 BTP Interceptor Dispatch Queue:**
-  When a critical violation is detected, it is immediately logged into the Dispatch Queue. The system calculates an "ROI Score" (Violations × Criticality / Tow ETA) to prioritize which vehicle the Tiger Towing units should impound first. Features a one-click CSV Export for instant warden deployment.
+## Run Locally
 
-* **📈 Congestion Cost Engine (LWR Shockwave Theory):**
-  An interactive, browser-based sandbox that allows administrators to use the **Lighthill-Whitham-Richards (LWR) Shockwave Theory**. Users can adjust lane widths and traffic flow to watch how a single illegally parked car creates a backward-propagating shockwave, culminating in lakhs of rupees of lost Value of Travel Time (VoTT).
+Start the backend:
 
----
-
-## 🛠️ Technology Stack
-
-* **Frontend:** Next.js (React), TailwindCSS (for utility), Vanilla CSS (for premium Glassmorphism & Dark Mode components).
-* **Backend:** Python, FastAPI.
-* **Data Engine:** Pandas (Data processing, filtering, and dynamic aggregation).
-* **Geospatial:** Haversine physics algorithm for live distance tracking.
-
----
-
-## 💻 How to Run Locally
-
-This prototype requires both the Python backend and the Next.js frontend to be running simultaneously.
-
-### 1. Start the Backend (Data Engine)
 ```bash
 cd backend
-pip install fastapi uvicorn pandas
+pip install -r requirements.txt
 uvicorn main:app --reload
 ```
-*The API will be live at `http://localhost:8000`*
 
-### 2. Start the Frontend (Command Center)
+Start the frontend:
+
 ```bash
 cd frontend
 npm install
 npm run dev
 ```
-*The Dashboard will be live at `http://localhost:3000`*
 
----
+The frontend defaults to `http://localhost:8000` for the API. Override it with:
 
-### 🏆 Built for the Flipkart Gridlock Hackathon
+```bash
+NEXT_PUBLIC_API_BASE_URL=http://localhost:8000 npm run dev
+```
+
+## Project Framing
+
+This is best presented as **parking violation hotspot intelligence plus enforcement prioritization**, not as a fully live AI traffic-control system. The strongest claim is that it turns violation data into an operational view: where parking violations cluster, how severe they may be, and where enforcement should act first.

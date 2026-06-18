@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { X, Truck, AlertTriangle, CheckCircle2, ChevronRight, Activity } from 'lucide-react';
+import { X, Truck, CheckCircle2, ChevronRight, Activity } from 'lucide-react';
+import { apiUrl } from '../lib/api';
 
 interface DispatchTarget {
   id: string;
@@ -20,8 +21,7 @@ export default function DispatchPanel({ isOpen, onClose, district }: { isOpen: b
 
   useEffect(() => {
     if (isOpen) {
-      setLoading(true);
-      fetch(`http://localhost:8000/api/dispatch?district=${encodeURIComponent(district)}`)
+      fetch(apiUrl(`/api/dispatch?district=${encodeURIComponent(district)}`))
         .then(res => res.json())
         .then(data => setQueue(data.dispatch_queue || []))
         .catch(err => console.error("Error fetching dispatch queue:", err))
@@ -68,7 +68,7 @@ export default function DispatchPanel({ isOpen, onClose, district }: { isOpen: b
             <Truck size={18} />
           </div>
           <div>
-            <h3 className="font-bold text-white tracking-wide">AI Dispatch Queue</h3>
+            <h3 className="font-bold text-white tracking-wide">Dispatch Priority Queue</h3>
             <p className="text-[10px] text-white/50 uppercase tracking-widest font-bold">Priority-Based ROI Routing</p>
           </div>
         </div>

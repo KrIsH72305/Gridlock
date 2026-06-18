@@ -1,0 +1,502 @@
+{
+  "12.9274,77.6799": {
+    "lanes": 2,
+    "highway": "trunk_link"
+  },
+  "12.9362,77.518": {
+    "lanes": 2,
+    "highway": "trunk"
+  },
+  "12.972,77.5774": {
+    "lanes": 2,
+    "highway": "residential"
+  },
+  "12.9891,77.5378": {
+    "lanes": 2,
+    "highway": "residential"
+  },
+  "12.9741,77.5488": {
+    "lanes": 2,
+    "highway": "residential"
+  },
+  "12.999,77.5495": {
+    "lanes": 2,
+    "highway": "residential"
+  },
+  "13.0084,77.6951": {
+    "lanes": 2,
+    "highway": "trunk"
+  },
+  "13.0003,77.6114": {
+    "lanes": 2,
+    "highway": "primary"
+  },
+  "12.9966,77.6115": {
+    "lanes": 2,
+    "highway": "tertiary"
+  },
+  "12.9816,77.6098": {
+    "lanes": 2,
+    "highway": "residential"
+  },
+  "12.9899,77.6016": {
+    "lanes": 2,
+    "highway": "tertiary"
+  },
+  "12.9259,77.6765": {
+    "lanes": 2,
+    "highway": "tertiary"
+  },
+  "12.9136,77.6785": {
+    "lanes": 3,
+    "highway": "primary"
+  },
+  "12.9345,77.6912": {
+    "lanes": 2,
+    "highway": "residential"
+  },
+  "12.9327,77.6886": {
+    "lanes": 1,
+    "highway": "trunk_link"
+  },
+  "12.9303,77.6854": {
+    "lanes": 2,
+    "highway": "tertiary"
+  },
+  "12.939,77.6968": {
+    "lanes": 4,
+    "highway": "tertiary"
+  },
+  "12.9836,77.5776": {
+    "lanes": 2,
+    "highway": "secondary"
+  },
+  "13.071,77.5879": {
+    "lanes": 2,
+    "highway": "secondary"
+  },
+  "13.0583,77.5915": {
+    "lanes": 2,
+    "highway": "tertiary"
+  },
+  "13.0636,77.5893": {
+    "lanes": 2,
+    "highway": "tertiary"
+  },
+  "13.0705,77.5926": {
+    "lanes": 2,
+    "highway": "secondary"
+  },
+  "13.06,77.5766": {
+    "lanes": 2,
+    "highway": "secondary"
+  },
+  "13.0106,77.5062": {
+    "lanes": 2,
+    "highway": "residential"
+  },
+  "13.0453,77.5074": {
+    "lanes": 2,
+    "highway": "primary"
+  },
+  "13.0108,77.5532": {
+    "lanes": 2,
+    "highway": "secondary"
+  },
+  "12.9964,77.5631": {
+    "lanes": 2,
+    "highway": "residential"
+  },
+  "13.0076,77.5634": {
+    "lanes": 2,
+    "highway": "secondary"
+  },
+  "13.0047,77.5538": {
+    "lanes": 2,
+    "highway": "secondary"
+  },
+  "12.9696,77.6413": {
+    "lanes": 2,
+    "highway": "tertiary"
+  },
+  "12.97,77.639": {
+    "lanes": 2,
+    "highway": "footway"
+  },
+  "13.0056,77.6857": {
+    "lanes": 2,
+    "highway": "trunk"
+  },
+  "12.9712,77.7121": {
+    "lanes": 3,
+    "highway": "primary"
+  },
+  "12.9429,77.6971": {
+    "lanes": 2,
+    "highway": "tertiary"
+  },
+  "12.9614,77.7167": {
+    "lanes": 2,
+    "highway": "primary"
+  },
+  "12.9507,77.6998": {
+    "lanes": 2,
+    "highway": "tertiary"
+  },
+  "12.8419,77.6459": {
+    "lanes": 2,
+    "highway": "residential"
+  },
+  "12.8408,77.6504": {
+    "lanes": 2,
+    "highway": "service"
+  },
+  "12.9955,77.696": {
+    "lanes": 2,
+    "highway": "footway"
+  },
+  "13.0003,77.6769": {
+    "lanes": 2,
+    "highway": "trunk"
+  },
+  "12.9962,77.6684": {
+    "lanes": 2,
+    "highway": "secondary"
+  },
+  "12.8925,77.6376": {
+    "lanes": 2,
+    "highway": "residential"
+  },
+  "12.8898,77.6397": {
+    "lanes": 2,
+    "highway": "secondary"
+  },
+  "12.9804,77.6029": {
+    "lanes": 2,
+    "highway": "secondary"
+  },
+  "12.9814,77.5985": {
+    "lanes": 2,
+    "highway": "service"
+  },
+  "12.9895,77.5992": {
+    "lanes": 2,
+    "highway": "footway"
+  },
+  "13.1852,77.68": {
+    "lanes": 2,
+    "highway": "service"
+  },
+  "12.9175,77.672": {
+    "lanes": 2,
+    "highway": "secondary"
+  },
+  "12.9843,77.6038": {
+    "lanes": 2,
+    "highway": "living_street"
+  },
+  "12.98,77.5543": {
+    "lanes": 2,
+    "highway": "residential"
+  },
+  "12.9808,77.5582": {
+    "lanes": 2,
+    "highway": "secondary"
+  },
+  "12.9823,77.5489": {
+    "lanes": 2,
+    "highway": "tertiary"
+  },
+  "12.9829,77.5602": {
+    "lanes": 2,
+    "highway": "secondary"
+  },
+  "12.9901,77.5037": {
+    "lanes": 2,
+    "highway": "residential"
+  },
+  "12.8703,77.6542": {
+    "lanes": 2,
+    "highway": "residential"
+  },
+  "12.9733,77.6171": {
+    "lanes": 2,
+    "highway": "service"
+  },
+  "12.9854,77.594": {
+    "lanes": 2,
+    "highway": "construction"
+  },
+  "12.9714,77.5975": {
+    "lanes": 2,
+    "highway": "footway"
+  },
+  "12.9579,77.7017": {
+    "lanes": 2,
+    "highway": "residential"
+  },
+  "12.9954,77.5717": {
+    "lanes": 2,
+    "highway": "secondary"
+  },
+  "12.9439,77.5711": {
+    "lanes": 2,
+    "highway": "tertiary"
+  },
+  "12.9757,77.56": {
+    "lanes": 2,
+    "highway": "primary"
+  },
+  "13.0073,77.5709": {
+    "lanes": 2,
+    "highway": "living_street"
+  },
+  "13.0353,77.5891": {
+    "lanes": 3,
+    "highway": "tertiary"
+  },
+  "12.9355,77.6153": {
+    "lanes": 2,
+    "highway": "service"
+  },
+  "12.9921,77.5538": {
+    "lanes": 2,
+    "highway": "service"
+  },
+  "12.9529,77.5418": {
+    "lanes": 2,
+    "highway": "footway"
+  },
+  "13.0475,77.5758": {
+    "lanes": 2,
+    "highway": "tertiary"
+  },
+  "12.9771,77.5773": {
+    "lanes": 2,
+    "highway": "footway"
+  },
+  "12.9647,77.577": {
+    "lanes": 2,
+    "highway": "pedestrian"
+  },
+  "13.0108,77.553": {
+    "lanes": 2,
+    "highway": "residential"
+  },
+  "12.9817,77.6102": {
+    "lanes": 2,
+    "highway": "footway"
+  },
+  "12.9992,77.55": {
+    "lanes": 2,
+    "highway": "primary"
+  },
+  "13.0083,77.6952": {
+    "lanes": 2,
+    "highway": "trunk"
+  },
+  "12.9442,77.5711": {
+    "lanes": 2,
+    "highway": "residential"
+  },
+  "13.071,77.588": {
+    "lanes": 2,
+    "highway": "secondary"
+  },
+  "12.9998,77.5714": {
+    "lanes": 2,
+    "highway": "primary"
+  },
+  "13.0077,77.571": {
+    "lanes": 2,
+    "highway": "footway"
+  },
+  "13.0474,77.5758": {
+    "lanes": 2,
+    "highway": "tertiary"
+  },
+  "12.9509,77.6998": {
+    "lanes": 2,
+    "highway": "footway"
+  },
+  "13.0004,77.6768": {
+    "lanes": 2,
+    "highway": "trunk"
+  },
+  "12.8418,77.6462": {
+    "lanes": 2,
+    "highway": "residential"
+  },
+  "12.9645,77.584": {
+    "lanes": 2,
+    "highway": "living_street"
+  },
+  "12.9744,77.5465": {
+    "lanes": 2,
+    "highway": "footway"
+  },
+  "12.9418,77.5672": {
+    "lanes": 2,
+    "highway": "footway"
+  },
+  "12.9274,77.6797": {
+    "lanes": 2,
+    "highway": "tertiary"
+  },
+  "12.9841,77.6033": {
+    "lanes": 2,
+    "highway": "tertiary"
+  },
+  "12.9964,77.6688": {
+    "lanes": 2,
+    "highway": "service"
+  },
+  "12.993,77.5534": {
+    "lanes": 2,
+    "highway": "tertiary"
+  },
+  "13.0357,77.5891": {
+    "lanes": 3,
+    "highway": "tertiary"
+  },
+  "12.9949,77.5714": {
+    "lanes": 2,
+    "highway": "residential"
+  },
+  "12.9395,77.584": {
+    "lanes": 2,
+    "highway": "footway"
+  },
+  "12.9304,77.6856": {
+    "lanes": 2,
+    "highway": "tertiary"
+  },
+  "13.1841,77.6797": {
+    "lanes": 3,
+    "highway": "secondary"
+  },
+  "12.9736,77.5505": {
+    "lanes": 2,
+    "highway": "residential"
+  },
+  "12.9317,77.6323": {
+    "lanes": 2,
+    "highway": "footway"
+  },
+  "12.9849,77.554": {
+    "lanes": 2,
+    "highway": "tertiary"
+  },
+  "12.995,77.6977": {
+    "lanes": 2,
+    "highway": "footway"
+  },
+  "12.9813,77.6095": {
+    "lanes": 2,
+    "highway": "footway"
+  },
+  "13.0082,77.6956": {
+    "lanes": 2,
+    "highway": "secondary"
+  },
+  "13.0116,77.5544": {
+    "lanes": 2,
+    "highway": "secondary"
+  },
+  "12.9828,77.6112": {
+    "lanes": 2,
+    "highway": "secondary"
+  },
+  "12.979,77.5782": {
+    "lanes": 2,
+    "highway": "secondary"
+  },
+  "12.9764,77.5764": {
+    "lanes": 2,
+    "highway": "secondary"
+  },
+  "12.9642,77.5768": {
+    "lanes": 2,
+    "highway": "primary"
+  },
+  "13.0117,77.5516": {
+    "lanes": 2,
+    "highway": "secondary"
+  },
+  "12.9392,77.584": {
+    "lanes": 2,
+    "highway": "secondary"
+  },
+  "13.0714,77.5925": {
+    "lanes": 2,
+    "highway": "secondary"
+  },
+  "12.9898,77.5561": {
+    "lanes": 2,
+    "highway": "secondary"
+  },
+  "12.9766,77.5789": {
+    "lanes": 2,
+    "highway": "service"
+  },
+  "12.9776,77.5755": {
+    "lanes": 2,
+    "highway": "footway"
+  },
+  "13.0083,77.5545": {
+    "lanes": 2,
+    "highway": "footway"
+  },
+  "12.9549,77.5856": {
+    "lanes": 3,
+    "highway": "primary"
+  },
+  "13.0692,77.5926": {
+    "lanes": 2,
+    "highway": "service"
+  },
+  "12.9775,77.5742": {
+    "lanes": 2,
+    "highway": "primary"
+  },
+  "13.0083,77.571": {
+    "lanes": 2,
+    "highway": "footway"
+  },
+  "13.0092,77.5492": {
+    "lanes": 2,
+    "highway": "primary"
+  },
+  "12.985,77.5538": {
+    "lanes": 2,
+    "highway": "secondary"
+  },
+  "12.993,77.5532": {
+    "lanes": 2,
+    "highway": "tertiary"
+  },
+  "12.9751,77.62": {
+    "lanes": 2,
+    "highway": "living_street"
+  },
+  "12.9438,77.571": {
+    "lanes": 2,
+    "highway": "secondary"
+  },
+  "12.9902,77.5047": {
+    "lanes": 2,
+    "highway": "secondary"
+  },
+  "12.9479,77.5801": {
+    "lanes": 2,
+    "highway": "secondary"
+  },
+  "12.9789,77.5751": {
+    "lanes": 2,
+    "highway": "secondary"
+  },
+  "12.9715,77.63": {
+    "lanes": 2,
+    "highway": "secondary"
+  }
+}
