@@ -62,18 +62,18 @@ export default function Modals({
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            backgroundColor: 'rgba(6, 10, 22, 0.85)',
-            backdropFilter: 'blur(12px)',
-            WebkitBackdropFilter: 'blur(12px)',
+            backgroundColor: 'rgba(0, 0, 0, 0.6)',
+            backdropFilter: 'none',
+            WebkitBackdropFilter: 'none',
             zIndex: 9999,
             padding: '16px'
           }}
         >
           <div 
             style={{
-              backgroundColor: '#121626',
-              border: '1px solid rgba(255, 255, 255, 0.1)',
-              borderRadius: '16px',
+              backgroundColor: 'var(--bg-surface)',
+              border: '1px solid var(--border-hairline)',
+              borderRadius: '8px',
               padding: '24px',
               width: '100%',
               maxWidth: '600px',
@@ -96,7 +96,7 @@ export default function Modals({
                 right: '16px',
                 background: 'none',
                 border: 'none',
-                color: '#c5c5d9',
+                color: 'var(--text-muted)',
                 cursor: 'pointer'
               }}
             >
@@ -106,8 +106,8 @@ export default function Modals({
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', paddingBottom: '8px', borderBottom: '1px solid rgba(255, 255, 255, 0.1)' }}>
               <span className="material-symbols-outlined" style={{ color: '#bdc2ff', fontSize: '24px' }}>help_center</span>
               <div>
-                <h3 style={{ margin: 0, fontSize: '18px', fontWeight: 'bold', color: '#dae2fd' }}>Support & Help Center</h3>
-                <p style={{ margin: 0, fontSize: '12px', color: '#c5c5d9' }}>Resolve platform issues and submit tickets</p>
+                <h3 style={{ margin: 0, fontSize: '18px', fontWeight: 'bold', color: 'var(--text-primary)' }}>Support & Help Center</h3>
+                <p style={{ margin: 0, fontSize: '12px', color: 'var(--text-muted)' }}>Resolve platform issues and submit tickets</p>
               </div>
             </div>
             
@@ -139,7 +139,7 @@ export default function Modals({
                           padding: '8px 12px',
                           fontSize: '12px',
                           fontWeight: 'bold',
-                          color: '#dae2fd',
+                          color: 'var(--text-primary)',
                           background: 'none',
                           border: 'none',
                           display: 'flex',
@@ -152,7 +152,7 @@ export default function Modals({
                         <span className="material-symbols-outlined" style={{ fontSize: '16px', transform: faqOpenIndex === idx ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }}>expand_more</span>
                       </button>
                       {faqOpenIndex === idx && (
-                        <div style={{ padding: '0 12px 10px 12px', fontSize: '11px', color: '#c5c5d9', lineHeight: '1.4', backgroundColor: 'rgba(0,0,0,0.1)' }}>
+                        <div style={{ padding: '0 12px 10px 12px', fontSize: '11px', color: 'var(--text-muted)', lineHeight: '1.4', backgroundColor: 'rgba(0,0,0,0.1)' }}>
                           {faq.a}
                         </div>
                       )}
@@ -168,8 +168,8 @@ export default function Modals({
                 {supportSuccess ? (
                   <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', padding: '16px', backgroundColor: 'rgba(62, 82, 255, 0.1)', borderRadius: '12px', border: '1px solid rgba(62, 82, 255, 0.2)' }}>
                     <span className="material-symbols-outlined animate-bounce" style={{ fontSize: '36px', color: '#bdc2ff', marginBottom: '8px' }}>check_circle</span>
-                    <h5 style={{ margin: 0, fontSize: '14px', fontWeight: 'bold', color: '#dae2fd' }}>Ticket Submitted</h5>
-                    <p style={{ margin: '4px 0 0 0', fontSize: '11px', color: '#c5c5d9' }}>We will review your inquiry and get back to you within 24 hours.</p>
+                    <h5 style={{ margin: 0, fontSize: '14px', fontWeight: 'bold', color: 'var(--text-primary)' }}>Ticket Submitted</h5>
+                    <p style={{ margin: '4px 0 0 0', fontSize: '11px', color: 'var(--text-muted)' }}>We will review your inquiry and get back to you within 24 hours.</p>
                   </div>
                 ) : (
                   <form onSubmit={handleSupportSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
@@ -184,7 +184,7 @@ export default function Modals({
                           border: '1px solid #444656',
                           borderRadius: '6px',
                           padding: '6px 10px',
-                          color: '#dae2fd',
+                          color: 'var(--text-primary)',
                           fontSize: '12px',
                           outline: 'none'
                         }}
@@ -210,7 +210,7 @@ export default function Modals({
                           border: '1px solid #444656',
                           borderRadius: '6px',
                           padding: '6px 10px',
-                          color: '#dae2fd',
+                          color: 'var(--text-primary)',
                           fontSize: '12px',
                           outline: 'none',
                           resize: 'none'
@@ -269,18 +269,18 @@ export default function Modals({
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            backgroundColor: 'rgba(6, 10, 22, 0.85)',
-            backdropFilter: 'blur(12px)',
-            WebkitBackdropFilter: 'blur(12px)',
+            backgroundColor: 'rgba(0, 0, 0, 0.6)',
+            backdropFilter: 'none',
+            WebkitBackdropFilter: 'none',
             zIndex: 9999,
             padding: '16px'
           }}
         >
           <div 
             style={{
-              backgroundColor: '#121626',
-              border: '1px solid rgba(255, 255, 255, 0.1)',
-              borderRadius: '16px',
+              backgroundColor: 'var(--bg-surface)',
+              border: '1px solid var(--border-hairline)',
+              borderRadius: '8px',
               padding: '24px',
               width: '100%',
               maxWidth: '380px',
@@ -308,8 +308,8 @@ export default function Modals({
             </div>
             
             <div>
-              <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 'bold', color: '#dae2fd' }}>Confirm Log Out</h3>
-              <p style={{ margin: '8px 0 0 0', fontSize: '12px', color: '#c5c5d9', lineHeight: '1.4' }}>Are you sure you want to end your current session? You will need to log back in to access the command center.</p>
+              <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 'bold', color: 'var(--text-primary)' }}>Confirm Log Out</h3>
+              <p style={{ margin: '8px 0 0 0', fontSize: '12px', color: 'var(--text-muted)', lineHeight: '1.4' }}>Are you sure you want to end your current session? You will need to log back in to access the command center.</p>
             </div>
             
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginTop: '4px' }}>
@@ -319,7 +319,7 @@ export default function Modals({
                   width: '100%',
                   border: '1px solid #444656',
                   backgroundColor: 'transparent',
-                  color: '#dae2fd',
+                  color: 'var(--text-primary)',
                   fontWeight: 'bold',
                   padding: '8px 16px',
                   borderRadius: '8px',

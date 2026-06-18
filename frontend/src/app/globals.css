@@ -1,35 +1,43 @@
 @import "tailwindcss";
 
 :root {
-  color-scheme: dark;
-  --bg-canvas: #0B0E14;
-  --bg-surface: #11151C;
-  --border-hairline: #1E232C;
-  --text-primary: #E8EAED;
-  --text-muted: #8B92A0;
-  --accent-signal: #3D7FFF;
-  --accent-positive: #2BA66C;
-  --accent-negative: #E5484D;
-  --accent-warning: #D89614;
-
-  --background: var(--bg-canvas);
-  --foreground: var(--text-primary);
+  --background: #FAFAFA;
+  --foreground: #09090B;
+  --panel-bg: #FFFFFF;
+  --panel-border: #E4E4E7;
+  --panel-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  
+  --muted-text: #71717A;
+  --accent: #2563EB; /* Vibrant professional blue accent */
+  --accent-foreground: #FFFFFF;
+  
+  --accent-tint: #EFF6FF;
+  
+  /* Status Colors */
+  --status-green: #10B981;
+  --status-blue: #3B82F6;
+  --status-red: #EF4444;
+  --status-amber: #F59E0B;
 }
 
-[data-theme="light"] {
-  color-scheme: light;
-  --bg-canvas: #FAFBFC;
-  --bg-surface: #FFFFFF;
-  --border-hairline: #E4E7EB;
-  --text-primary: #0B0E14;
-  --text-muted: #5B6472;
-  --accent-signal: #2B63CC;
-  --accent-positive: #2BA66C;
-  --accent-negative: #E5484D;
-  --accent-warning: #D89614;
-
-  --background: var(--bg-canvas);
-  --foreground: var(--text-primary);
+.dark {
+  --background: #0B0C0E; /* Dark slate near-black canvas */
+  --foreground: #F4F4F5;
+  --panel-bg: #16171A; /* Greyish panel, distinct from canvas */
+  --panel-border: #22252A; /* Slate hairline border */
+  --panel-shadow: none;
+  
+  --muted-text: #8E929A;
+  --accent: #3B82F6; /* Vibrant professional blue accent */
+  --accent-foreground: #FFFFFF;
+  
+  --accent-tint: #1D2433; /* Darker blue tint for active backgrounds */
+  
+  /* Status Colors */
+  --status-green: #10B981;
+  --status-blue: #3B82F6;
+  --status-red: #EF4444;
+  --status-amber: #F59E0B;
 }
 
 @theme {
@@ -47,64 +55,60 @@
 }
 
 @theme inline {
-  --color-background: var(--bg-canvas);
-  --color-foreground: var(--text-primary);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-canvas: var(--background);
+  --color-panel: var(--panel-bg);
+  --color-hairline: var(--panel-border);
+  --color-border: var(--panel-border);
+  --color-accent-signal: var(--accent);
   
-  --color-canvas: var(--bg-canvas);
-  --color-surface: var(--bg-surface);
-  --color-hairline: var(--border-hairline);
-  --color-text-primary: var(--text-primary);
-  --color-text-muted: var(--text-muted);
-  --color-accent-signal: var(--accent-signal);
-  --color-accent-positive: var(--accent-positive);
-  --color-accent-negative: var(--accent-negative);
-  --color-accent-warning: var(--accent-warning);
-
-  --color-error: var(--accent-negative);
-  --color-on-surface-variant: var(--text-muted);
-  --color-secondary-fixed-dim: var(--accent-signal);
-  --color-primary-container: var(--bg-surface);
-  --color-on-primary: var(--text-primary);
-  --color-on-secondary: var(--text-muted);
-  --color-error-container: var(--bg-surface);
-  --color-tertiary-fixed: var(--text-muted);
-  --color-tertiary: var(--text-muted);
-  --color-tertiary-container: var(--bg-surface);
-  --color-surface-container-high: var(--bg-surface);
-  --color-on-error: var(--text-primary);
-  --color-surface-bright: var(--bg-surface);
-  --color-on-error-container: var(--text-primary);
-  --color-surface-container: var(--bg-surface);
-  --color-outline: var(--border-hairline);
-  --color-inverse-on-surface: var(--bg-surface);
-  --color-on-tertiary-fixed-variant: var(--text-muted);
-  --color-surface-container-highest: var(--bg-surface);
-  --color-on-surface: var(--text-primary);
-  --color-on-background: var(--text-primary);
-  --color-outline-variant: var(--border-hairline);
-  --color-tertiary-fixed-dim: var(--text-muted);
-  --color-on-primary-fixed-variant: var(--text-muted);
-  --color-on-secondary-fixed: var(--text-muted);
-  --color-surface-dim: var(--bg-canvas);
-  --color-secondary-container: var(--bg-surface);
-  --color-on-tertiary-container: var(--text-muted);
-  --color-inverse-surface: var(--text-primary);
-  --color-on-primary-fixed: var(--text-primary);
-  --color-on-secondary-container: var(--text-muted);
-  --color-on-secondary-fixed-variant: var(--text-muted);
-  --color-primary-fixed-dim: var(--accent-signal);
-  --color-primary: var(--accent-signal);
-  --color-inverse-primary: var(--accent-signal);
-  --color-surface-container-lowest: var(--bg-canvas);
-  --color-surface-container-low: var(--bg-surface);
-  --color-primary-fixed: var(--accent-signal);
-  --color-secondary-fixed: var(--accent-signal);
-  --color-surface-tint: var(--accent-signal);
-  --color-secondary: var(--accent-signal);
-  --color-on-tertiary: var(--text-muted);
-  --color-surface-variant: var(--bg-surface);
-  --color-on-tertiary-fixed: var(--text-muted);
-  --color-on-primary-container: var(--text-primary);
+  --color-error: var(--status-red);
+  --color-on-surface-variant: var(--muted-text);
+  --color-secondary-fixed-dim: var(--status-blue);
+  --color-primary-container: var(--panel-bg);
+  --color-on-primary: var(--accent-foreground);
+  --color-on-secondary: var(--foreground);
+  --color-error-container: var(--status-red);
+  --color-tertiary-fixed: var(--muted-text);
+  --color-tertiary: var(--status-blue);
+  --color-tertiary-container: var(--panel-bg);
+  --color-surface-container-high: var(--panel-bg);
+  --color-on-error: var(--foreground);
+  --color-surface-bright: var(--panel-bg);
+  --color-on-error-container: var(--foreground);
+  --color-surface-container: var(--panel-bg);
+  --color-outline: var(--panel-border);
+  --color-inverse-on-surface: var(--background);
+  --color-on-tertiary-fixed-variant: var(--status-blue);
+  --color-surface-container-highest: var(--panel-bg);
+  --color-on-surface: var(--foreground);
+  --color-on-background: var(--foreground);
+  --color-outline-variant: var(--panel-border);
+  --color-tertiary-fixed-dim: var(--status-blue);
+  --color-on-primary-fixed-variant: var(--status-blue);
+  --color-on-secondary-fixed: var(--foreground);
+  --color-surface-dim: var(--background);
+  --color-secondary-container: var(--panel-bg);
+  --color-surface: var(--background);
+  --color-on-tertiary-container: var(--foreground);
+  --color-inverse-surface: var(--foreground);
+  --color-on-primary-fixed: var(--foreground);
+  --color-on-secondary-container: var(--foreground);
+  --color-on-secondary-fixed-variant: var(--foreground);
+  --color-primary-fixed-dim: var(--accent);
+  --color-primary: var(--accent);
+  --color-inverse-primary: var(--accent);
+  --color-surface-container-lowest: var(--background);
+  --color-surface-container-low: var(--panel-bg);
+  --color-primary-fixed: var(--accent);
+  --color-secondary-fixed: var(--status-blue);
+  --color-surface-tint: var(--accent);
+  --color-secondary: var(--status-blue);
+  --color-on-tertiary: var(--foreground);
+  --color-surface-variant: var(--panel-bg);
+  --color-on-tertiary-fixed: var(--foreground);
+  --color-on-primary-container: var(--foreground);
 
   --spacing-lg: 24px;
   --spacing-margin-desktop: 32px;
@@ -116,43 +120,43 @@
   --spacing-sm: 8px;
   --spacing-md: 16px;
 
-  --radius-lg: 8px;
-  --radius-xl: 8px;
-  --radius-full: 9999px;
-  --radius-DEFAULT: 8px;
+  --radius-lg: 0.25rem;
+  --radius-xl: 0.5rem;
+  --radius-full: 0.75rem;
+  --radius-DEFAULT: 0.125rem;
 
   --font-body-md: var(--font-inter);
   --font-body-lg: var(--font-inter);
   --font-headline-lg-mobile: var(--font-inter);
   --font-headline-lg: var(--font-inter);
-  --font-label-md: var(--font-mono), monospace;
+  --font-label-md: var(--font-inter);
   --font-display-lg: var(--font-inter);
   --font-headline-md: var(--font-inter);
-  --font-code-sm: var(--font-mono), monospace;
+  --font-code-sm: var(--font-inter);
   --font-body-sm: var(--font-inter);
 }
 
 body {
-  background: var(--bg-canvas);
-  color: var(--text-primary);
+  background: var(--background);
+  color: var(--foreground);
   font-family: var(--font-body-md);
   margin: 0;
   padding: 0;
   overflow-x: hidden;
 }
 
-/* Custom scrollbar matching fintech theme */
+/* Custom scrollbar */
 ::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
+  width: 8px;
+  height: 8px;
 }
 ::-webkit-scrollbar-track {
-    background: var(--bg-canvas); 
+  background: var(--background); 
 }
 ::-webkit-scrollbar-thumb {
-    background: var(--border-hairline); 
-    border-radius: 3px;
+  background: var(--panel-border); 
+  border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-    background: var(--text-muted); 
+  background: var(--muted-text); 
 }

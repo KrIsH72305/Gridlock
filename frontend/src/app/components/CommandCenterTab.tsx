@@ -169,56 +169,71 @@ export default function CommandCenterTab({
       </div>
 
       {/* Dashboard Grid */}
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 h-auto min-h-0 flex-1">
+      <div className="grid grid-cols-1 xl:grid-cols-4 gap-6 h-auto min-h-0 flex-1">
         
-        {/* Left Column: Map & Metrics (Spans 2 columns on XL) */}
-        <div className="xl:col-span-2 flex flex-col gap-6">
+        {/* Left Column: Map & Metrics (Spans 3 columns on XL) */}
+        <div className="xl:col-span-3 flex flex-col gap-6">
           
           {/* Top Summary Metric Cards */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-            <div className="bg-[#1e2025]/80 backdrop-blur-md border border-white/5 border-t-[3px] border-t-[#f44336] rounded-xl p-4 relative overflow-hidden group hover:border-white/20 transition-all shadow-lg">
-              <div className="flex items-center gap-2 text-white/50 font-bold text-[10px] tracking-widest uppercase mb-3">
-                <span className="material-symbols-outlined text-[14px]">report</span>
-                <span className="truncate">TOTAL VIOLATIONS</span>
+          <div className="bg-panel border border-border rounded-xl p-5 grid grid-cols-1 sm:grid-cols-4 divide-y sm:divide-y-0 sm:divide-x divide-border gap-4 sm:gap-0">
+            
+            {/* Metric 1 */}
+            <div className="sm:px-4 sm:first:pl-0 sm:last:pr-0 flex flex-col justify-between min-w-0">
+              <div className="flex items-center gap-2 text-muted font-semibold text-xs mb-2">
+                <span className="material-symbols-outlined text-[16px] text-muted">report</span>
+                <span className="truncate">Total Violations</span>
               </div>
-              <div className="font-display-lg text-3xl font-black text-white tracking-tight mb-2">{stats.totalViolations.toLocaleString()}</div>
-              <div className="flex items-center gap-1.5 text-[#f44336] font-bold text-[10px] uppercase tracking-wider">
-                <span className="material-symbols-outlined text-[14px] animate-pulse">trending_up</span>
-                <span>Dataset Window</span>
+              <div className="flex items-center gap-2">
+                <div className="w-[6px] h-[22px] bg-[var(--status-red)] rounded-full shrink-0"></div>
+                <div className="font-display-lg text-3xl font-bold text-foreground tracking-tight">{stats.totalViolations.toLocaleString()}</div>
               </div>
-            </div>
-
-            <div className="bg-[#1e2025]/80 backdrop-blur-md border border-white/5 border-t-[3px] border-t-[#3e52ff] rounded-xl p-4 relative overflow-hidden group hover:border-white/20 transition-all shadow-lg">
-              <div className="flex items-center gap-2 text-white/50 font-bold text-[10px] tracking-widest uppercase mb-3">
-                <span className="material-symbols-outlined text-[14px]">speed</span>
-                <span className="truncate">AVG SPEED (CBD)</span>
-              </div>
-              <div className="font-display-lg text-3xl font-black text-white tracking-tight mb-2">{stats.avgSpeed} <span className="text-white/40 text-base font-semibold">km/h</span></div>
-              <div className="flex items-center gap-1.5 text-[#f44336] font-bold text-[10px] uppercase tracking-wider">
-                <span className="material-symbols-outlined text-[14px]">trending_down</span>
-                <span>estimated</span>
+              <div className="text-muted text-[11px] mt-2">
+                Dataset Window
               </div>
             </div>
 
-            <div className="bg-[#1e2025]/80 backdrop-blur-md border border-white/5 border-t-[3px] border-t-amber-500 rounded-xl p-4 relative overflow-hidden group hover:border-white/20 transition-all shadow-lg">
-              <div className="flex items-center gap-2 text-white/50 font-bold text-[10px] tracking-widest uppercase mb-3">
-                <span className="material-symbols-outlined text-[14px]">bus_alert</span>
-                <span className="truncate">BUS LANE BLOCKS</span>
+            {/* Metric 2 */}
+            <div className="sm:px-4 sm:first:pl-0 sm:last:pr-0 pt-4 sm:pt-0 flex flex-col justify-between min-w-0">
+              <div className="flex items-center gap-2 text-muted font-semibold text-xs mb-2">
+                <span className="material-symbols-outlined text-[16px] text-muted">speed</span>
+                <span className="truncate">Average Speed (CBD)</span>
               </div>
-              <div className="font-display-lg text-3xl font-black text-white tracking-tight mb-3">{stats.busBlocks.toLocaleString()}</div>
-              <div className="w-full bg-black/40 h-1.5 rounded-full overflow-hidden">
-                <div className="bg-gradient-to-r from-amber-600 to-amber-400 h-full rounded-full" style={{ width: '65%' }}></div>
+              <div className="flex items-center gap-2">
+                <div className="w-[6px] h-[22px] bg-[var(--status-blue)] rounded-full shrink-0"></div>
+                <div className="font-display-lg text-3xl font-bold text-foreground tracking-tight">{stats.avgSpeed} <span className="text-muted text-base font-medium">km/h</span></div>
+              </div>
+              <div className="text-muted text-[11px] mt-2">
+                Estimated
               </div>
             </div>
 
-            <div className="bg-[#1e2025]/80 backdrop-blur-md border border-white/5 border-t-[3px] border-t-emerald-500 rounded-xl p-4 relative overflow-hidden group hover:border-white/20 transition-all shadow-lg">
-              <div className="flex items-center gap-2 text-white/50 font-bold text-[10px] tracking-widest uppercase mb-3">
-                <span className="material-symbols-outlined text-[14px]">local_shipping</span>
-                <span className="truncate">MAIN ROAD BLOCKS</span>
+            {/* Metric 3 */}
+            <div className="sm:px-4 sm:first:pl-0 sm:last:pr-0 pt-4 sm:pt-0 flex flex-col justify-between min-w-0">
+              <div className="flex items-center gap-2 text-muted font-semibold text-xs mb-2">
+                <span className="material-symbols-outlined text-[16px] text-muted">bus_alert</span>
+                <span className="truncate">Bus Lane Blocks</span>
               </div>
-              <div className="font-display-lg text-3xl font-black text-white tracking-tight mb-3">{stats.loadingZones.toLocaleString()}</div>
-              <div className="w-full bg-black/40 h-1.5 rounded-full overflow-hidden">
-                <div className="bg-gradient-to-r from-emerald-600 to-emerald-400 h-full rounded-full" style={{ width: '82%' }}></div>
+              <div className="flex items-center gap-2">
+                <div className="w-[6px] h-[22px] bg-[var(--status-amber)] rounded-full shrink-0"></div>
+                <div className="font-display-lg text-3xl font-bold text-foreground tracking-tight">{stats.busBlocks.toLocaleString()}</div>
+              </div>
+              <div className="text-muted text-[11px] mt-2">
+                Active
+              </div>
+            </div>
+
+            {/* Metric 4 */}
+            <div className="sm:px-4 sm:first:pl-0 sm:last:pr-0 pt-4 sm:pt-0 flex flex-col justify-between min-w-0">
+              <div className="flex items-center gap-2 text-muted font-semibold text-xs mb-2">
+                <span className="material-symbols-outlined text-[16px] text-muted">local_shipping</span>
+                <span className="truncate">Main Road Blocks</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-[6px] h-[22px] bg-[var(--status-green)] rounded-full shrink-0"></div>
+                <div className="font-display-lg text-3xl font-bold text-foreground tracking-tight">{stats.loadingZones.toLocaleString()}</div>
+              </div>
+              <div className="text-muted text-[11px] mt-2">
+                Monitored
               </div>
             </div>
           </div>
@@ -244,18 +259,18 @@ export default function CommandCenterTab({
         </div>
 
         {/* Right Sidebar: Active Hotspots & Blindspots Tabs */}
-        <div className="bg-surface-container-low border border-outline-variant rounded-lg flex flex-col overflow-hidden">
+        <div className="bg-panel border border-border rounded-xl flex flex-col overflow-hidden">
           {/* Tab buttons */}
-          <div className="flex border-b border-outline-variant shrink-0 bg-surface-container">
+          <div className="flex border-b border-border shrink-0 bg-background/50">
             <button 
               onClick={() => setActiveSidebarTab('hotspots')}
-              className={`flex-1 py-3 text-center text-xs font-bold border-b-2 cursor-pointer transition-all ${activeSidebarTab === 'hotspots' ? 'border-primary text-primary' : 'border-transparent text-on-surface-variant hover:text-white'}`}
+              className={`flex-1 py-3 text-center text-xs font-bold border-b-2 cursor-pointer transition-all ${activeSidebarTab === 'hotspots' ? 'border-foreground text-foreground font-semibold' : 'border-transparent text-muted hover:text-foreground'}`}
             >
               Impact Hotspots
             </button>
             <button 
               onClick={() => setActiveSidebarTab('blindspots')}
-              className={`flex-1 py-3 text-center text-xs font-bold border-b-2 cursor-pointer transition-all ${activeSidebarTab === 'blindspots' ? 'border-primary text-primary' : 'border-transparent text-on-surface-variant hover:text-white'}`}
+              className={`flex-1 py-3 text-center text-xs font-bold border-b-2 cursor-pointer transition-all ${activeSidebarTab === 'blindspots' ? 'border-foreground text-foreground font-semibold' : 'border-transparent text-muted hover:text-foreground'}`}
             >
               Blindspot Radar
             </button>
@@ -264,13 +279,13 @@ export default function CommandCenterTab({
 
           {activeSidebarTab === 'hotspots' ? (
             <>
-              <div className="p-3 border-b border-outline-variant shrink-0">
+              <div className="p-3 border-b border-border shrink-0">
                 <div className="relative">
-                  <span className="material-symbols-outlined absolute left-2 top-1/2 -translate-y-1/2 text-on-surface-variant text-[18px] pointer-events-none">filter_alt</span>
+                  <span className="material-symbols-outlined absolute left-2 top-1/2 -translate-y-1/2 text-muted text-[18px] pointer-events-none">filter_alt</span>
                   <input 
                     value={district}
                     onChange={(e) => setDistrict(e.target.value)}
-                    className="w-full bg-surface-container border border-outline-variant rounded py-1.5 pl-8 pr-3 text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all" 
+                    className="w-full bg-background border border-border rounded-lg py-1.5 pl-8 pr-3 text-sm focus:outline-none focus:border-foreground focus:ring-1 focus:ring-foreground transition-all text-foreground" 
                     placeholder="Filter district..." 
                     type="text"
                   />
@@ -290,27 +305,27 @@ export default function CommandCenterTab({
                       mapRef.current?.flyTo({ center: [feature.properties.centerLng, feature.properties.centerLat], zoom: 15, duration: 1500 });
                       onSelectHotspot(feature.properties);
                     }}
-                    className="p-3 hover:bg-surface-container rounded cursor-pointer border-b border-outline-variant/50 last:border-0 transition-colors group flex items-start justify-between"
+                    className="p-3 hover:bg-foreground/[0.02] rounded-lg cursor-pointer border-b border-border/50 last:border-0 transition-colors group flex items-start justify-between"
                   >
                     <div>
                       <div className="flex items-center gap-2 mb-1">
-                        <span className="w-1.5 h-1.5 rounded-full bg-error"></span>
-                        <h4 className="font-bold text-sm text-on-surface group-hover:text-primary transition-colors">{feature.properties.locationName}</h4>
+                        <span className="w-1.5 h-1.5 rounded-full bg-[var(--status-red)]"></span>
+                        <h4 className="font-bold text-sm text-foreground group-hover:text-foreground/90 transition-colors">{feature.properties.locationName}</h4>
                       </div>
-                      <p className="text-xs text-on-surface-variant ml-3.5 mb-1">OSM Road: <span className="text-on-surface capitalize">{feature.properties.highwayType} ({feature.properties.laneCount}L)</span></p>
-                      <p className="text-xs text-on-surface-variant ml-3.5 mb-1">BPR Delay: <span className="text-on-surface">+{feature.properties.bprDelay.toFixed(1)} mins</span></p>
-                      <p className="text-xs text-on-surface-variant ml-3.5">Violations: <span className="text-on-surface">{feature.properties.violationCount} reported</span></p>
+                      <p className="text-xs text-muted ml-3.5 mb-1">OSM Road: <span className="text-foreground capitalize">{feature.properties.highwayType} ({feature.properties.laneCount}L)</span></p>
+                      <p className="text-xs text-muted ml-3.5 mb-1">BPR Delay: <span className="text-foreground">+{feature.properties.bprDelay.toFixed(1)} mins</span></p>
+                      <p className="text-xs text-muted ml-3.5">Violations: <span className="text-foreground">{feature.properties.violationCount} reported</span></p>
                     </div>
                     {feature.properties.bprDelay >= 15 ? (
-                      <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-error/20 text-error border border-error/30 mt-1 uppercase">Critical</span>
+                      <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-[var(--status-red)]/10 text-[var(--status-red)] border border-[var(--status-red)]/20 mt-1 uppercase">Critical</span>
                     ) : feature.properties.bprDelay >= 5 ? (
-                      <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-secondary-container/20 text-secondary-container border border-secondary-container/30 mt-1 uppercase">High</span>
+                      <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-[var(--status-amber)]/10 text-[var(--status-amber)] border border-[var(--status-amber)]/20 mt-1 uppercase">High</span>
                     ) : (
-                      <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-primary/20 text-primary border border-primary/30 mt-1 uppercase">Moderate</span>
+                      <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-[var(--status-blue)]/10 text-[var(--status-blue)] border border-[var(--status-blue)]/20 mt-1 uppercase">Moderate</span>
                     )}
                   </div>
                 )) : (
-                  <div className="p-4 text-center text-on-surface-variant text-sm">
+                  <div className="p-4 text-center text-muted text-sm">
                     <p>No hotspots found matching criteria.</p>
                   </div>
                 )}
@@ -324,18 +339,18 @@ export default function CommandCenterTab({
                   onClick={() => {
                     mapRef.current?.flyTo({ center: [b.lng, b.lat], zoom: 15, duration: 1500 });
                   }}
-                  className="p-3 hover:bg-surface-container rounded cursor-pointer border-b border-outline-variant/50 last:border-0 transition-colors group flex items-start justify-between"
+                  className="p-3 hover:bg-foreground/[0.02] rounded-lg cursor-pointer border-b border-border/50 last:border-0 transition-colors group flex items-start justify-between"
                 >
                   <div>
                     <div className="flex items-center gap-2 mb-1">
-                      <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>
-                      <h4 className="font-bold text-sm text-on-surface group-hover:text-primary transition-colors">{b.locationName}</h4>
+                      <span className="w-1.5 h-1.5 rounded-full bg-[var(--status-amber)]"></span>
+                      <h4 className="font-bold text-sm text-foreground group-hover:text-foreground/90 transition-colors">{b.locationName}</h4>
                     </div>
-                    <p className="text-xs text-on-surface-variant ml-3.5 mb-1">Observed vs Expected: <span className="text-on-surface">{b.observedCount} / {b.expectedCount}</span></p>
-                    <p className="text-xs text-on-surface-variant ml-3.5">Unique Patrols: <span className="text-on-surface">{b.uniquePatrols} officers</span></p>
+                    <p className="text-xs text-muted ml-3.5 mb-1">Observed vs Expected: <span className="text-foreground">{b.observedCount} / {b.expectedCount}</span></p>
+                    <p className="text-xs text-muted ml-3.5">Unique Patrols: <span className="text-foreground">{b.uniquePatrols} officers</span></p>
                   </div>
                   <div className="text-right mt-1">
-                    <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-amber-500/20 text-amber-500 border border-amber-500/30 uppercase">
+                    <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-[var(--status-amber)]/10 text-[var(--status-amber)] border border-[var(--status-amber)]/20 uppercase">
                       {b.patrolBiasRatio.toFixed(1)}x Bias
                     </span>
                   </div>

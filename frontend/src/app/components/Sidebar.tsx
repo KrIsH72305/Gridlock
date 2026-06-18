@@ -11,6 +11,8 @@ interface SidebarProps {
   onPrintBriefing: () => void;
   setShowSupportModal: (show: boolean) => void;
   setShowLogoutConfirm: (show: boolean) => void;
+  isCollapsed: boolean;
+  onToggleCollapse: () => void;
 }
 
 export default function Sidebar({
@@ -21,7 +23,9 @@ export default function Sidebar({
   onExportReport,
   onPrintBriefing,
   setShowSupportModal,
-  setShowLogoutConfirm
+  setShowLogoutConfirm,
+  isCollapsed,
+  onToggleCollapse
 }: SidebarProps) {
   const tabs = [
     { id: "Command Center", icon: "dashboard", fill: true },
@@ -32,16 +36,29 @@ export default function Sidebar({
   ];
 
   return (
-    <nav className="bg-canvas h-screen w-[280px] shrink-0 border-r border-hairline hidden md:flex flex-col py-md z-40 relative">
+    <nav className={`bg-background h-screen shrink-0 border-r border-border hidden md:flex flex-col py-md z-40 relative transition-all duration-300 ${isCollapsed ? 'w-[70px]' : 'w-[280px]'}`}>
       {/* Header */}
-      <div className="px-md pb-lg flex items-center gap-sm border-b border-hairline">
-        <div className="w-10 h-10 rounded bg-accent-signal flex items-center justify-center shrink-0">
-          <span className="material-symbols-outlined text-canvas" style={{ fontVariationSettings: "'FILL' 1" }}>domain</span>
+      <div className="px-md pb-lg flex items-center justify-between border-b border-border">
+        <div className="flex items-center gap-sm overflow-hidden">
+          <div className="w-10 h-10 rounded bg-panel border border-border flex items-center justify-center shrink-0">
+            <span className="material-symbols-outlined text-foreground" style={{ fontVariationSettings: "'FILL' 1" }}>domain</span>
+          </div>
+          {!isCollapsed && (
+            <div className="transition-opacity duration-300">
+              <h1 className="font-headline-md text-sm font-bold text-foreground truncate">Urban Intel</h1>
+              <p className="font-label-md text-xs text-muted">City Admin</p>
+            </div>
+          )}
         </div>
-        <div>
-          <h1 className="font-headline-md text-headline-md font-bold text-text-primary">Urban Intel</h1>
-          <p className="font-label-md text-label-md text-text-muted">City Admin</p>
-        </div>
+        <button 
+          onClick={onToggleCollapse} 
+          className="text-muted hover:text-foreground cursor-pointer flex items-center justify-center w-8 h-8 rounded-full hover:bg-panel shrink-0"
+          title={isCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
+        >
+          <span className="material-symbols-outlined text-sm">
+            {isCollapsed ? 'chevron_right' : 'chevron_left'}
+          </span>
+        </button>
       </div>
 
       {/* Navigation Links */}
@@ -50,52 +67,57 @@ export default function Sidebar({
           <button 
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
-            className={`flex items-center gap-md px-md py-sm rounded transition-colors duration-200 w-full text-left cursor-pointer border-l-4 ${
+            className={`flex items-center gap-md px-md py-sm rounded transition-colors duration-200 w-full text-left cursor-pointer ${
               activeTab === tab.id 
-                ? 'text-accent-signal border-accent-signal font-bold bg-surface' 
-                : 'text-text-muted border-transparent hover:bg-surface'
+                ? 'text-foreground font-bold bg-[var(--accent-tint)]' 
+                : 'text-muted hover:bg-panel'
             }`}
+            title={isCollapsed ? tab.id : undefined}
           >
-            <span className="material-symbols-outlined" style={tab.fill ? { fontVariationSettings: "'FILL' 1" } : {}}>{tab.icon}</span>
-            <span className="font-body-md text-body-md">{tab.id}</span>
+            <span className="material-symbols-outlined text-[18px] shrink-0" style={tab.fill ? { fontVariationSettings: "'FILL' 1" } : {}}>{tab.icon}</span>
+            {!isCollapsed && <span className="font-body-md text-body-md truncate">{tab.id}</span>}
           </button>
         ))}
       </div>
 
       {/* CTA & Footer */}
-      <div className="px-md pt-md border-t border-hairline flex flex-col gap-sm">
+      <div className="px-md pt-md border-t border-border flex flex-col gap-sm">
         <button 
           onClick={() => setIsDispatchPanelOpen(!isDispatchPanelOpen)}
-          className={`w-full font-label-md text-label-md py-sm rounded transition-all cursor-pointer flex items-center justify-center gap-xs font-bold ${
+          className={`w-full font-label-md text-label-md py-sm rounded transition-all cursor-pointer flex items-center justify-center gap-xs ${
             isDispatchPanelOpen 
-              ? 'bg-accent-negative text-white' 
-              : 'bg-accent-signal text-white hover:brightness-110'
+              ? 'bg-[var(--status-red)] text-white hover:opacity-90' 
+              : 'bg-primary text-on-primary font-semibold hover:opacity-90'
           }`}
+          title={isCollapsed ? (isDispatchPanelOpen ? 'Close Dispatch' : 'Dispatch Plan') : undefined}
         >
-          <span className="material-symbols-outlined text-[18px]">emergency_share</span>
-          {isDispatchPanelOpen ? 'Close Dispatch' : 'Dispatch Plan'}
+          <span className="material-symbols-outlined text-[18px] shrink-0">emergency_share</span>
+          {!isCollapsed && <span className="truncate">{isDispatchPanelOpen ? 'Close Dispatch' : 'Dispatch Plan'}</span>}
         </button>
         <button 
           onClick={onExportReport} 
-          className="w-full bg-surface border border-hairline text-text-primary font-label-md text-label-md py-sm rounded hover:bg-canvas transition-all cursor-pointer flex items-center justify-center gap-xs"
+          className="w-full bg-panel text-foreground border border-border font-label-md text-label-md py-sm rounded hover:bg-foreground/5 transition-all cursor-pointer flex items-center justify-center gap-xs"
+          title={isCollapsed ? "Export Report" : undefined}
         >
-          <span className="material-symbols-outlined text-[18px]">download</span>
-          Export Report
+          <span className="material-symbols-outlined text-[18px] shrink-0">download</span>
+          {!isCollapsed && <span className="truncate">Export Report</span>}
         </button>
         <button 
           onClick={onPrintBriefing} 
-          className="w-full bg-surface border border-hairline text-text-primary font-label-md text-label-md py-sm rounded hover:bg-canvas transition-all cursor-pointer flex items-center justify-center gap-xs"
+          className="w-full bg-panel text-foreground border border-border font-label-md text-label-md py-sm rounded hover:bg-foreground/5 transition-all cursor-pointer flex items-center justify-center gap-xs"
+          title={isCollapsed ? "Print Briefing" : undefined}
         >
-          <span className="material-symbols-outlined text-[18px]">print</span>
-          Print Briefing
+          <span className="material-symbols-outlined text-[18px] shrink-0">print</span>
+          {!isCollapsed && <span className="truncate">Print Briefing</span>}
         </button>
         <div className="flex flex-col gap-xs mt-sm">
           <button 
             onClick={() => setShowSupportModal(true)}
-            className="flex items-center gap-md px-sm py-xs rounded text-text-muted hover:bg-surface transition-colors duration-200 w-full text-left cursor-pointer"
+            className="flex items-center gap-md px-sm py-xs rounded text-muted hover:bg-panel transition-colors duration-200 w-full text-left cursor-pointer"
+            title={isCollapsed ? "Support" : undefined}
           >
-            <span className="material-symbols-outlined text-[20px]">help</span>
-            <span className="font-body-sm text-body-sm">Support</span>
+            <span className="material-symbols-outlined text-[20px] shrink-0">help</span>
+            {!isCollapsed && <span className="font-body-sm text-body-sm truncate">Support</span>}
           </button>
         </div>
       </div>

@@ -25,6 +25,7 @@ export default function TrafficDashboard() {
   const [activeTab, setActiveTab] = useState("Command Center");
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const [isDispatchPanelOpen, setIsDispatchPanelOpen] = useState(false);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
   // Filter State
   const [timeframe, setTimeframe] = useState<Timeframe>("Recent Dataset Window");
@@ -308,12 +309,8 @@ export default function TrafficDashboard() {
 
   return (
     <div 
-      className="text-on-surface font-body-md overflow-hidden h-screen w-full relative bg-cover bg-center bg-no-repeat"
-      style={{ backgroundImage: 'url("/bg-hero.png")' }}
+      className="text-foreground font-body-md overflow-hidden h-screen w-full relative bg-background"
     >
-      {/* Dark Overlay for Readability */}
-      <div className="absolute inset-0 bg-[#060a16]/70 z-0 pointer-events-none"></div>
-      
       {/* Main Dashboard Flex Layout Wrapper */}
       <div className="flex h-full w-full relative z-10">
         
@@ -327,6 +324,8 @@ export default function TrafficDashboard() {
           onPrintBriefing={handlePrintBriefing}
           setShowSupportModal={setShowSupportModal}
           setShowLogoutConfirm={setShowLogoutConfirm}
+          isCollapsed={isSidebarCollapsed}
+          onToggleCollapse={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
         />
 
         {/* Main Content Area */}

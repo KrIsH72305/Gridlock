@@ -102,7 +102,7 @@ export default function EconomicCalculator() {
       <div className="max-w-6xl mx-auto space-y-8">
         
         {/* Header section with gradient */}
-        <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-b from-white/5 to-transparent p-8 md:p-10 shadow-2xl">
+        <div className="relative overflow-hidden rounded-3xl border border-hairline bg-gradient-to-b from-white/5 to-transparent p-8 md:p-10 shadow-2xl">
           <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-600 via-indigo-500 to-purple-600"></div>
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 relative z-10">
             <div>
@@ -118,7 +118,7 @@ export default function EconomicCalculator() {
                 Translate physical traffic blockages into real-world economic damage. Adjust the parameters below to simulate how a single illegally parked vehicle cascades into massive financial losses using <span className="text-blue-400 font-semibold">LWR Shockwave Theory</span>.
               </p>
             </div>
-            <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-4 flex flex-col items-end min-w-[200px]">
+            <div className="bg-canvas border border-hairline backdrop-blur-xl border border-hairline rounded-2xl p-4 flex flex-col items-end min-w-[200px]">
               <span className="text-xs text-gray-400 uppercase tracking-wider font-bold mb-1">Live Damage Estimate</span>
               <div className="text-3xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-red-500 to-orange-400">
                 ₹{animatedEconomicCost.toLocaleString()}
@@ -129,7 +129,7 @@ export default function EconomicCalculator() {
         </div>
 
         {/* Quick Guide */}
-        <div className="bg-[#121212] border border-white/10 rounded-3xl overflow-hidden shadow-xl">
+        <div className="bg-[#121212] border border-hairline rounded-3xl overflow-hidden shadow-xl">
           <button 
             onClick={() => setShowGuide(!showGuide)}
             className="w-full p-5 flex justify-between items-center bg-white/[0.02] hover:bg-white/[0.04] transition-colors"
@@ -141,21 +141,21 @@ export default function EconomicCalculator() {
             <ChevronDown className={`w-5 h-5 text-gray-400 transition-transform duration-300 ${showGuide ? 'rotate-180' : ''}`} />
           </button>
           
-          <div className={`transition-all duration-500 ease-in-out ${showGuide ? 'max-h-[800px] opacity-100 border-t border-white/5' : 'max-h-0 opacity-0'}`}>
+          <div className={`transition-all duration-500 ease-in-out ${showGuide ? 'max-h-[800px] opacity-100 border-t border-hairline' : 'max-h-0 opacity-0'}`}>
             <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6 text-sm text-gray-300">
-              <div className="bg-white/5 p-4 rounded-xl border border-white/5">
+              <div className="bg-canvas border border-hairline p-4 rounded-xl border border-hairline">
                 <p className="mb-2"><strong className="text-white flex items-center gap-2"><Activity size={16} className="text-blue-400"/> 1. The Physics (LWR Theory)</strong></p>
                 <p>This tool uses Lighthill-Whitham-Richards (LWR) shockwave theory. It estimates the financial damage of a single illegally parked car by modeling how a physical bottleneck creates a backward-propagating queue of delayed vehicles.</p>
               </div>
-              <div className="bg-white/5 p-4 rounded-xl border border-white/5">
+              <div className="bg-canvas border border-hairline p-4 rounded-xl border border-hairline">
                 <p className="mb-2"><strong className="text-white flex items-center gap-2"><CarFront size={16} className="text-red-400"/> 2. Physical Limits</strong></p>
                 <p>Adjust the lane width and the parked car&apos;s width. A wider parked vehicle blocks more of the lane, which drastically drops the road&apos;s <strong>Effective Capacity</strong> (the maximum number of cars that can pass per hour).</p>
               </div>
-              <div className="bg-white/5 p-4 rounded-xl border border-white/5">
+              <div className="bg-canvas border border-hairline p-4 rounded-xl border border-hairline">
                 <p className="mb-2"><strong className="text-white flex items-center gap-2"><TrendingUp size={16} className="text-amber-400"/> 3. Traffic Conditions</strong></p>
                 <p>If the &quot;Arriving Flow&quot; of traffic is higher than the new restricted &quot;Effective Capacity&quot;, a shockwave queue forms. The longer the violation lasts, the exponentially worse the cumulative delay gets for the network.</p>
               </div>
-              <div className="bg-white/5 p-4 rounded-xl border border-white/5">
+              <div className="bg-canvas border border-hairline p-4 rounded-xl border border-hairline">
                 <p className="mb-2"><strong className="text-white flex items-center gap-2"><IndianRupee size={16} className="text-emerald-400"/> 4. Economic Cost</strong></p>
                 <p>We take the total vehicle delay and multiply it by the &quot;Avg Occupancy&quot; (people per car) and the &quot;Value of Time&quot; (local hourly wage) to estimate the final fiscal damage caused by the violation.</p>
               </div>
@@ -167,7 +167,7 @@ export default function EconomicCalculator() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           
           {/* Left Column: Sliders */}
-          <div className="lg:col-span-7 bg-[#121212] border border-white/10 rounded-3xl p-6 md:p-8 shadow-xl relative overflow-hidden">
+          <div className="lg:col-span-7 bg-[#121212] border border-hairline rounded-3xl p-6 md:p-8 shadow-xl relative overflow-hidden">
             {/* Subtle glow effect in background */}
             <div className="absolute -top-20 -left-20 w-64 h-64 bg-blue-500/5 rounded-full blur-3xl pointer-events-none"></div>
             
@@ -177,8 +177,8 @@ export default function EconomicCalculator() {
             </h3>
 
             <div className="mb-8 rounded-xl border border-blue-500/20 bg-blue-500/5 p-4 relative z-10">
-              <label htmlFor="hotspot-loader" className="block text-xs font-bold uppercase tracking-wider text-blue-300 mb-2">Load Real Hotspot</label>
-              <select id="hotspot-loader" value={selectedHotspot} onChange={(event) => loadHotspot(event.target.value)} className="w-full rounded-lg border border-white/10 bg-[#171923] px-3 py-2.5 text-sm text-gray-200 outline-none focus:border-blue-400">
+              <label htmlFor="hotspot-loader" className="block text-xs font-bold uppercase tracking-wider text-accent-signal mb-2">Load Real Hotspot</label>
+              <select id="hotspot-loader" value={selectedHotspot} onChange={(event) => loadHotspot(event.target.value)} className="w-full rounded-lg border border-hairline bg-canvas px-3 py-2.5 text-sm text-gray-200 outline-none focus:border-accent-signal">
                 <option value="">Choose a mapped hotspot...</option>
                 {hotspots.map(hotspot => <option key={hotspot.id} value={hotspot.id}>{hotspot.locationName} · {hotspot.policeStation}</option>)}
               </select>
@@ -191,17 +191,17 @@ export default function EconomicCalculator() {
                 <div className="group">
                   <div className="flex justify-between items-center mb-3">
                     <label className="text-sm font-medium text-gray-400 group-hover:text-gray-300 transition-colors">Total Lane Width</label>
-                    <span className="text-sm font-bold bg-white/10 px-3 py-1 rounded-full text-blue-300 border border-white/5">{laneWidth.toFixed(1)} m</span>
+                    <span className="text-sm font-bold bg-canvas border border-hairline px-3 py-1 rounded-full text-accent-signal border border-hairline">{laneWidth.toFixed(1)} m</span>
                   </div>
-                  <input type="range" min="2.5" max="5.0" step="0.1" value={laneWidth} onChange={(e) => setLaneWidth(parseFloat(e.target.value))} className="w-full h-2 bg-gray-800 rounded-full appearance-none cursor-pointer accent-blue-500 hover:accent-blue-400 transition-all" />
+                  <input type="range" min="2.5" max="5.0" step="0.1" value={laneWidth} onChange={(e) => setLaneWidth(parseFloat(e.target.value))} className="w-full h-[2px] bg-hairline rounded-full appearance-none cursor-pointer accent-accent-signal transition-all" />
                 </div>
 
                 <div className="group">
                   <div className="flex justify-between items-center mb-3">
                     <label className="text-sm font-medium text-gray-400 group-hover:text-gray-300 transition-colors">Parked Vehicle Obstruction</label>
-                    <span className="text-sm font-bold bg-white/10 px-3 py-1 rounded-full text-red-300 border border-white/5">{carWidth.toFixed(1)} m</span>
+                    <span className="text-sm font-bold bg-canvas border border-hairline px-3 py-1 rounded-full text-accent-negative border border-hairline">{carWidth.toFixed(1)} m</span>
                   </div>
-                  <input type="range" min="1.0" max="2.5" step="0.1" value={carWidth} onChange={(e) => setCarWidth(parseFloat(e.target.value))} className="w-full h-2 bg-gray-800 rounded-full appearance-none cursor-pointer accent-red-500 hover:accent-red-400 transition-all" />
+                  <input type="range" min="1.0" max="2.5" step="0.1" value={carWidth} onChange={(e) => setCarWidth(parseFloat(e.target.value))} className="w-full h-[2px] bg-hairline rounded-full appearance-none cursor-pointer accent-accent-signal transition-all" />
                 </div>
               </div>
 
@@ -212,17 +212,17 @@ export default function EconomicCalculator() {
                 <div className="group">
                   <div className="flex justify-between items-center mb-3">
                     <label className="text-sm font-medium text-gray-400 group-hover:text-gray-300 transition-colors">Arriving Traffic Flow</label>
-                    <span className="text-sm font-bold bg-white/10 px-3 py-1 rounded-full text-amber-300 border border-white/5">{arrivingFlow} PCU/hr</span>
+                    <span className="text-sm font-bold bg-canvas border border-hairline px-3 py-1 rounded-full text-accent-warning border border-hairline">{arrivingFlow} PCU/hr</span>
                   </div>
-                  <input type="range" min="500" max="2500" step="50" value={arrivingFlow} onChange={(e) => setArrivingFlow(parseInt(e.target.value))} className="w-full h-2 bg-gray-800 rounded-full appearance-none cursor-pointer accent-amber-500 hover:accent-amber-400 transition-all" />
+                  <input type="range" min="500" max="2500" step="50" value={arrivingFlow} onChange={(e) => setArrivingFlow(parseInt(e.target.value))} className="w-full h-[2px] bg-hairline rounded-full appearance-none cursor-pointer accent-accent-signal transition-all" />
                 </div>
 
                 <div className="group">
                   <div className="flex justify-between items-center mb-3">
                     <label className="text-sm font-medium text-gray-400 group-hover:text-gray-300 transition-colors">Duration of Violation</label>
-                    <span className="text-sm font-bold bg-white/10 px-3 py-1 rounded-full text-purple-300 border border-white/5">{durationMin} min</span>
+                    <span className="text-sm font-bold bg-canvas border border-hairline px-3 py-1 rounded-full text-accent-signal border border-hairline">{durationMin} min</span>
                   </div>
-                  <input type="range" min="5" max="180" step="5" value={durationMin} onChange={(e) => setDurationMin(parseInt(e.target.value))} className="w-full h-2 bg-gray-800 rounded-full appearance-none cursor-pointer accent-purple-500 hover:accent-purple-400 transition-all" />
+                  <input type="range" min="5" max="180" step="5" value={durationMin} onChange={(e) => setDurationMin(parseInt(e.target.value))} className="w-full h-[2px] bg-hairline rounded-full appearance-none cursor-pointer accent-accent-signal transition-all" />
                 </div>
               </div>
 
@@ -235,7 +235,7 @@ export default function EconomicCalculator() {
                     <label className="text-xs font-medium text-gray-400">Avg Occupancy</label>
                     <span className="text-sm font-bold text-gray-200">{occupancy.toFixed(1)} pax/veh</span>
                   </div>
-                  <input type="range" min="1.0" max="4.0" step="0.1" value={occupancy} onChange={(e) => setOccupancy(parseFloat(e.target.value))} className="w-full h-1.5 bg-gray-800 rounded-full appearance-none cursor-pointer accent-emerald-500 transition-all" />
+                  <input type="range" min="1.0" max="4.0" step="0.1" value={occupancy} onChange={(e) => setOccupancy(parseFloat(e.target.value))} className="w-full h-[2px] bg-hairline rounded-full appearance-none cursor-pointer accent-accent-signal transition-all" />
                 </div>
 
                 <div className="group">
@@ -247,41 +247,41 @@ export default function EconomicCalculator() {
                     <button 
                       type="button"
                       onClick={() => setVott(120)}
-                      className={`text-[9px] font-bold px-2 py-1 rounded transition-all cursor-pointer border ${vott === 120 ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30' : 'bg-white/5 text-white/50 border-white/5 hover:text-white'}`}
+                      className={`text-[9px] font-bold px-2 py-1 rounded transition-all cursor-pointer border ${vott === 120 ? 'bg-accent-signal/15 text-accent-signal border-accent-signal/25' : 'bg-canvas border border-hairline text-white/50 border-hairline hover:text-white'}`}
                     >
                       Commuter (₹120)
                     </button>
                     <button 
                       type="button"
                       onClick={() => setVott(350)}
-                      className={`text-[9px] font-bold px-2 py-1 rounded transition-all cursor-pointer border ${vott === 350 ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30' : 'bg-white/5 text-white/50 border-white/5 hover:text-white'}`}
+                      className={`text-[9px] font-bold px-2 py-1 rounded transition-all cursor-pointer border ${vott === 350 ? 'bg-accent-signal/15 text-accent-signal border-accent-signal/25' : 'bg-canvas border border-hairline text-white/50 border-hairline hover:text-white'}`}
                     >
                       IT Corridor (₹350)
                     </button>
                     <button 
                       type="button"
                       onClick={() => setVott(250)}
-                      className={`text-[9px] font-bold px-2 py-1 rounded transition-all cursor-pointer border ${vott === 250 ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30' : 'bg-white/5 text-white/50 border-white/5 hover:text-white'}`}
+                      className={`text-[9px] font-bold px-2 py-1 rounded transition-all cursor-pointer border ${vott === 250 ? 'bg-accent-signal/15 text-accent-signal border-accent-signal/25' : 'bg-canvas border border-hairline text-white/50 border-hairline hover:text-white'}`}
                     >
                       Logistics (₹250)
                     </button>
                   </div>
-                  <input type="range" min="50" max="500" step="10" value={vott} onChange={(e) => setVott(parseInt(e.target.value))} className="w-full h-1.5 bg-gray-800 rounded-full appearance-none cursor-pointer accent-emerald-500 transition-all" />
+                  <input type="range" min="50" max="500" step="10" value={vott} onChange={(e) => setVott(parseInt(e.target.value))} className="w-full h-[2px] bg-hairline rounded-full appearance-none cursor-pointer accent-accent-signal transition-all" />
                 </div>
               </div>
             </div>
 
             {/* Chart Explanations Box (Fills empty space) */}
-            <div className="mt-12 pt-8 border-t border-white/10 relative z-10">
+            <div className="mt-12 pt-8 border-t border-hairline relative z-10">
               <h4 className="text-sm font-bold text-gray-300 flex items-center gap-2 mb-4">
                 <Activity className="w-5 h-5 text-blue-400" /> Chart Legend & Physics Engine
               </h4>
               <div className="space-y-4 text-xs leading-relaxed text-gray-400">
-                <div className="bg-white/5 p-4 rounded-xl border border-white/5">
+                <div className="bg-canvas border border-hairline p-4 rounded-xl border border-hairline">
                   <p className="mb-1"><strong className="text-red-400 flex items-center gap-1.5"><TrendingUp size={14}/> Exponential Economic Loss</strong></p>
                   <p>As the blockage duration increases, traffic doesn&apos;t just build up linearly. Delayed vehicles slow down the cars behind them, causing a cascading &quot;shockwave&quot; queue. The line chart visualizes how fast this financial damage curve bends upward.</p>
                 </div>
-                <div className="bg-white/5 p-4 rounded-xl border border-white/5">
+                <div className="bg-canvas border border-hairline p-4 rounded-xl border border-hairline">
                   <p className="mb-1"><strong className="text-blue-400 flex items-center gap-1.5"><Activity size={14}/> Road Capacity Bottleneck</strong></p>
                   <p>The Bar Chart simulates the physical road. The blue bar is the road&apos;s natural capacity. The red bar is what&apos;s left after the parked car takes up lane space. If the <strong className="text-amber-400">Yellow Dotted Line</strong> (Arrival Flow) overtakes the red bar, a traffic jam begins forming.</p>
                 </div>
@@ -295,7 +295,7 @@ export default function EconomicCalculator() {
             
             {/* KPI Cards Grid */}
             <div className="grid grid-cols-2 gap-4">
-              <div className="bg-gradient-to-br from-gray-900 to-black border border-white/10 rounded-2xl p-5 shadow-lg relative overflow-hidden group hover:border-white/20 transition-all">
+              <div className="bg-gradient-to-br from-gray-900 to-black border border-hairline rounded-2xl p-5 shadow-lg relative overflow-hidden group hover:border-white/20 transition-all">
                 <div className="absolute top-0 right-0 p-3 opacity-10 group-hover:opacity-20 transition-opacity">
                   <CarFront className="w-12 h-12" />
                 </div>
@@ -304,7 +304,7 @@ export default function EconomicCalculator() {
                 <div className="text-xs text-gray-500 mt-1">PCU/hr</div>
               </div>
 
-              <div className="bg-gradient-to-br from-gray-900 to-black border border-white/10 rounded-2xl p-5 shadow-lg relative overflow-hidden group hover:border-white/20 transition-all">
+              <div className="bg-gradient-to-br from-gray-900 to-black border border-hairline rounded-2xl p-5 shadow-lg relative overflow-hidden group hover:border-white/20 transition-all">
                 <div className="absolute top-0 right-0 p-3 opacity-10 group-hover:opacity-20 transition-opacity">
                   <Clock className="w-12 h-12" />
                 </div>
@@ -315,10 +315,10 @@ export default function EconomicCalculator() {
             </div>
 
             {/* Detailed Breakdown */}
-            <div className="bg-[#121212] border border-white/10 rounded-3xl overflow-hidden shadow-xl">
+            <div className="bg-[#121212] border border-hairline rounded-3xl overflow-hidden shadow-xl">
               <button 
                 onClick={() => setShowBreakdown(!showBreakdown)}
-                className="w-full p-5 flex justify-between items-center bg-white/[0.02] hover:bg-white/[0.04] transition-colors border-b border-white/5"
+                className="w-full p-5 flex justify-between items-center bg-white/[0.02] hover:bg-white/[0.04] transition-colors border-b border-hairline"
               >
                 <div className="font-bold text-base flex items-center gap-2">
                   <TrendingUp className="w-5 h-5 text-indigo-400" />
@@ -330,7 +330,7 @@ export default function EconomicCalculator() {
               <div className={`transition-all duration-500 ease-in-out ${showBreakdown ? 'max-h-[600px] opacity-100' : 'max-h-0 opacity-0'}`}>
                 <div className="p-2 space-y-1">
                   
-                  <div className="flex justify-between items-center py-3 px-4 rounded-xl hover:bg-white/5 transition-colors">
+                  <div className="flex justify-between items-center py-3 px-4 rounded-xl hover:bg-canvas border border-hairline transition-colors">
                     <div className="flex items-center gap-3">
                       <div className="w-8 h-8 rounded-lg bg-red-500/10 flex items-center justify-center text-red-400">
                         <AlertTriangle className="w-4 h-4" />
@@ -343,7 +343,7 @@ export default function EconomicCalculator() {
                     </div>
                   </div>
 
-                  <div className="flex justify-between items-center py-3 px-4 rounded-xl hover:bg-white/5 transition-colors">
+                  <div className="flex justify-between items-center py-3 px-4 rounded-xl hover:bg-canvas border border-hairline transition-colors">
                     <div className="flex items-center gap-3">
                       <div className="w-8 h-8 rounded-lg bg-amber-500/10 flex items-center justify-center text-amber-400">
                         <TrendingUp className="w-4 h-4" />
@@ -355,24 +355,24 @@ export default function EconomicCalculator() {
                     </div>
                   </div>
 
-                  <div className="flex justify-between items-center py-3 px-4 rounded-xl hover:bg-white/5 transition-colors">
+                  <div className="flex justify-between items-center py-3 px-4 rounded-xl hover:bg-canvas border border-hairline transition-colors">
                     <div className="flex items-center gap-3">
                       <div className="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center text-blue-400">
                         <Clock className="w-4 h-4" />
                       </div>
                       <span className="text-sm text-gray-300">Vehicle Delay</span>
                     </div>
-                    <div className="text-sm font-mono text-blue-300">{totalDelayVehHours.toFixed(1)} hrs</div>
+                    <div className="text-sm font-mono text-accent-signal">{totalDelayVehHours.toFixed(1)} hrs</div>
                   </div>
 
-                  <div className="flex justify-between items-center py-3 px-4 rounded-xl hover:bg-white/5 transition-colors">
+                  <div className="flex justify-between items-center py-3 px-4 rounded-xl hover:bg-canvas border border-hairline transition-colors">
                     <div className="flex items-center gap-3">
                       <div className="w-8 h-8 rounded-lg bg-purple-500/10 flex items-center justify-center text-purple-400">
                         <Users className="w-4 h-4" />
                       </div>
                       <span className="text-sm text-gray-300">Human Time Lost</span>
                     </div>
-                    <div className="text-sm font-mono text-purple-300">{personHoursLost.toFixed(1)} hrs</div>
+                    <div className="text-sm font-mono text-accent-signal">{personHoursLost.toFixed(1)} hrs</div>
                   </div>
 
                   <div className="mt-2 p-4 bg-gradient-to-r from-red-500/10 to-orange-500/10 border-t border-red-500/20 flex justify-between items-center">
@@ -397,7 +397,7 @@ export default function EconomicCalculator() {
 
             {/* CHARTS SECTION */}
             <div className="space-y-6">
-              <div className="bg-[#121212] p-6 rounded-3xl border border-white/10 shadow-xl">
+              <div className="bg-[#121212] p-6 rounded-3xl border border-hairline shadow-xl">
                 <h4 className="text-sm font-bold text-gray-300 uppercase tracking-widest mb-6 flex items-center gap-2">
                   <TrendingUp size={16} className="text-red-400" /> Exponential Economic Loss
                 </h4>
@@ -418,7 +418,7 @@ export default function EconomicCalculator() {
                 </div>
               </div>
 
-              <div className="bg-[#121212] p-6 rounded-3xl border border-white/10 shadow-xl">
+              <div className="bg-[#121212] p-6 rounded-3xl border border-hairline shadow-xl">
                 <h4 className="text-sm font-bold text-gray-300 uppercase tracking-widest mb-6 flex items-center gap-2">
                   <Activity size={16} className="text-blue-400" /> Road Capacity Bottleneck
                 </h4>
@@ -438,7 +438,7 @@ export default function EconomicCalculator() {
                     </BarChart>
                   </ResponsiveContainer>
                 </div>
-                <div className={`mt-3 flex items-center gap-2 rounded-lg border px-3 py-2 text-xs ${isJamForming ? 'border-amber-400/30 bg-amber-400/10 text-amber-300' : 'border-emerald-400/20 bg-emerald-400/10 text-emerald-300'}`}>
+                <div className={`mt-3 flex items-center gap-2 rounded-lg border px-3 py-2 text-xs ${isJamForming ? 'border-amber-400/30 bg-amber-400/10 text-accent-warning' : 'border-emerald-400/20 bg-emerald-400/10 text-emerald-300'}`}>
                   <span className={`h-2 w-2 rounded-full ${isJamForming ? 'bg-amber-400 animate-pulse' : 'bg-emerald-400'}`} />
                   {isJamForming ? `Jam forming: arrivals exceed effective capacity by ${excessDemand} PCU/hr.` : 'Stable flow: effective capacity remains above arrivals.'}
                 </div>

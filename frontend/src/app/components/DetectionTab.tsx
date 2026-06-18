@@ -112,26 +112,26 @@ export default function DetectionTab() {
     <div className="flex-grow space-y-6 pb-12 text-on-surface">
       <div className="flex justify-between items-center mb-4">
         <div>
-          <h2 className="font-headline-md text-3xl font-bold text-primary">Detection Engine</h2>
+          <h2 className="font-headline-md text-3xl font-bold text-accent-signal">Detection Engine</h2>
           <p className="font-body-sm text-on-surface-variant">BMTC bus-stop encroachment simulator with proximity scoring</p>
         </div>
       </div>
 
       {/* Summary Metrics Bar */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="bg-surface-container border border-outline-variant rounded-xl p-4">
+        <div className="bg-surface-container border border-outline-variant rounded-lg p-4">
           <div className="text-xs text-on-surface-variant font-bold uppercase tracking-wider mb-2">Active Violations</div>
           <div className="text-3xl font-black text-white">{violations.length}</div>
         </div>
-        <div className="bg-surface-container border border-outline-variant rounded-xl p-4 border-b-4 border-b-error">
+        <div className="bg-surface-container border border-outline-variant rounded-lg p-4 border-b-4 border-b-error">
           <div className="text-xs text-on-surface-variant font-bold uppercase tracking-wider mb-2">Critical Count</div>
           <div className="text-3xl font-black text-error">{criticalCount}</div>
         </div>
-        <div className="bg-surface-container border border-outline-variant rounded-xl p-4 border-b-4 border-b-amber-500">
+        <div className="bg-surface-container border border-outline-variant rounded-lg p-4 border-b-4 border-b-amber-500">
           <div className="text-xs text-on-surface-variant font-bold uppercase tracking-wider mb-2">Live Economic Loss</div>
           <div className="text-3xl font-black text-amber-500">₹{totalCost.toLocaleString()}/hr</div>
         </div>
-        <div className="bg-surface-container border border-outline-variant rounded-xl p-4">
+        <div className="bg-surface-container border border-outline-variant rounded-lg p-4">
           <div className="text-xs text-on-surface-variant font-bold uppercase tracking-wider mb-2">Monitored Hotspots</div>
           <div className="text-3xl font-black text-white">{stops.length} <span className="text-sm font-normal text-on-surface-variant">stops</span></div>
         </div>
@@ -141,10 +141,10 @@ export default function DetectionTab() {
         {/* Left Column: GPS Simulator and Queue */}
         <div className="lg:col-span-1 space-y-6">
           {/* GPS Ping Simulator */}
-          <div className="bg-surface-container-high border border-outline-variant rounded-xl p-5 shadow-lg relative overflow-hidden">
+          <div className="bg-surface-container-high border border-outline-variant rounded-lg p-5 shadow-lg relative overflow-hidden">
             <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary to-secondary"></div>
             <h3 className="font-bold text-lg mb-4 flex items-center gap-2">
-              <span className="material-symbols-outlined text-primary">satellite_alt</span>
+              <span className="material-symbols-outlined text-accent-signal">satellite_alt</span>
               GPS Ping Simulator
             </h3>
             <p className="text-xs text-on-surface-variant mb-4">Paste live coordinates from a Vahan API ping below to test the Haversine detection engine.</p>
@@ -196,14 +196,14 @@ export default function DetectionTab() {
         {/* Right Column: Dispatch Queue & Map */}
         <div className="lg:col-span-2 space-y-6">
           {/* Dispatch Queue */}
-          <div className="bg-surface-container border border-outline-variant rounded-xl overflow-hidden shadow-lg">
+          <div className="bg-surface-container border border-outline-variant rounded-lg overflow-hidden shadow-lg">
             <div className="p-4 border-b border-outline-variant flex justify-between items-center bg-surface-container-high">
               <h3 className="font-bold flex items-center gap-2 text-white">
                 <span className="material-symbols-outlined text-[#4cd6ff]">local_police</span>
                 BTP Interceptor Dispatch
               </h3>
               <div className="flex items-center gap-3">
-                <button onClick={clearAllViolations} className="flex items-center gap-1 text-[11px] bg-surface-container-highest hover:bg-white/10 text-white/80 px-3 py-1 rounded transition-colors border border-white/10" disabled={violations.length === 0}>
+                <button onClick={clearAllViolations} className="flex items-center gap-1 text-[11px] bg-surface-container-highest hover:bg-canvas border border-hairline text-white/80 px-3 py-1 rounded transition-colors border border-hairline" disabled={violations.length === 0}>
                   <span className="material-symbols-outlined text-[14px]">delete</span> Clear All
                 </button>
                 <button onClick={exportToCSV} className="flex items-center gap-1 text-[11px] bg-[#3e52ff]/20 hover:bg-[#3e52ff]/40 text-[#a6e6ff] px-3 py-1 rounded transition-colors border border-[#3e52ff]/30" disabled={violations.length === 0}>
@@ -232,7 +232,7 @@ export default function DetectionTab() {
                     <tr key={v.id} className="hover:bg-surface-container-high transition-colors group">
                       <td className="px-4 py-3 text-on-surface-variant whitespace-nowrap">{new Date(v.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', second:'2-digit'})}</td>
                       <td className="px-4 py-3 font-medium truncate max-w-[200px] text-white" title={v.stop_name}>{v.stop_name}</td>
-                      <td className="px-4 py-3 font-mono text-xs text-white/70 bg-white/5 rounded px-1">{v.vehicle_id}</td>
+                      <td className="px-4 py-3 font-mono text-xs text-white/70 bg-canvas border border-hairline rounded px-1">{v.vehicle_id}</td>
                       <td className="px-4 py-3">
                         <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${v.severity_badge === 'Critical' ? 'bg-[#93000a] text-[#ffdad6]' : v.severity_badge === 'High' ? 'bg-amber-900/50 text-amber-500' : 'bg-surface-container-highest text-on-surface'}`}>
                           {v.severity_badge}
@@ -247,7 +247,7 @@ export default function DetectionTab() {
           </div>
           
           {/* Stop List Reference */}
-          <div className="bg-[#171f33] border border-outline-variant rounded-xl p-4 shadow-inner">
+          <div className="bg-[#171f33] border border-outline-variant rounded-lg p-4 shadow-inner">
              <h4 className="text-xs font-bold mb-3 flex items-center gap-2 text-white/50 uppercase tracking-widest">
                 <span className="material-symbols-outlined text-[16px]">directions_bus</span>
                 Dynamically Extracted Hotspots (From Dataset)
@@ -255,7 +255,7 @@ export default function DetectionTab() {
              <p className="text-[11px] text-white/40 mb-3">Click on any of the dataset-derived hotspots below to copy its coordinates into the GPS simulator and test the proximity logic.</p>
              <div className="flex flex-wrap gap-2">
                 {stops.map(s => (
-                  <div key={s.id} className="bg-surface-container-high px-2 py-1.5 rounded-md text-[11px] border border-white/5 hover:border-primary/50 hover:bg-primary/10 cursor-pointer text-white/80 transition-all flex items-center gap-1" 
+                  <div key={s.id} className="bg-surface-container-high px-2 py-1.5 rounded-md text-[11px] border border-hairline hover:border-primary/50 hover:bg-primary/10 cursor-pointer text-white/80 transition-all flex items-center gap-1" 
                        onClick={() => setPingForm({...pingForm, lat: s.lat.toString(), lng: s.lng.toString()})}
                        title="Click to copy coordinates to simulator">
                     <span className="w-1.5 h-1.5 bg-[#3e52ff] rounded-full inline-block"></span>
@@ -266,13 +266,13 @@ export default function DetectionTab() {
           </div>
 
           {/* Detection Formulas Explanation */}
-          <div className="bg-[#1e2025]/80 backdrop-blur-md border border-[#3e52ff]/20 rounded-xl p-4 shadow-lg mt-6">
+          <div className="bg-surface  border border-hairline rounded-lg p-4 shadow-lg mt-6">
             <h4 className="text-xs font-bold mb-3 flex items-center gap-2 text-[#a6e6ff] uppercase tracking-widest">
               <span className="material-symbols-outlined text-[16px]">calculate</span>
               Detection Scoring Formulas
             </h4>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs text-white/70">
-              <div className="bg-white/5 p-3 rounded-lg border border-white/10">
+              <div className="bg-canvas border border-hairline p-3 rounded-lg border border-hairline">
                 <strong className="text-white block mb-1">Severity Score (0-100)</strong>
                 <p className="mb-2">Calculated by weighing three dynamic factors:</p>
                 <ul className="list-disc pl-4 space-y-1">
@@ -281,7 +281,7 @@ export default function DetectionTab() {
                   <li><span className="text-[#4ade80]">Route Density:</span> Stops with more buses per hour get higher severity (+25 max).</li>
                 </ul>
               </div>
-              <div className="bg-white/5 p-3 rounded-lg border border-white/10">
+              <div className="bg-canvas border border-hairline p-3 rounded-lg border border-hairline">
                 <strong className="text-white block mb-1">Cost Impact (₹/hr)</strong>
                 <p className="mb-2">Measures the cascading economic loss to the city caused by the blockage:</p>
                 <div className="font-mono text-[10px] bg-black/30 p-2 rounded text-[#a6e6ff] break-words">

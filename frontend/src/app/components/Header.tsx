@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useRef, useEffect } from 'react';
-import { useTheme } from '../lib/ThemeContext';
 
 interface Notification {
   id: number;
@@ -38,7 +37,24 @@ export default function Header({
   activeBlindspotsCount
 }: HeaderProps) {
   const dropdownRef = useRef<HTMLDivElement>(null);
-  const { theme, toggleTheme } = useTheme();
+  const [isDark, setIsDark] = React.useState(true);
+
+  useEffect(() => {
+    setIsDark(document.documentElement.classList.contains('dark'));
+  }, []);
+
+  const toggleTheme = () => {
+    const nextTheme = isDark ? 'light' : 'dark';
+    if (nextTheme === 'dark') {
+      document.documentElement.classList.add('dark');
+      localStorage.setItem('theme', 'dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+      localStorage.setItem('theme', 'light');
+    }
+    setIsDark(!isDark);
+  };
+
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -52,7 +68,7 @@ export default function Header({
   }, [setActiveDropdown]);
 
   return (
-    <header className="bg-[#121626]/60 backdrop-blur-md top-0 sticky z-30 border-b border-white/5 flex justify-between items-center h-16 px-4 md:px-6 lg:px-8 shrink-0 gap-4">
+    <header className="bg-panel top-0 sticky z-30 border-b border-border flex justify-between items-center h-16 px-4 md:px-6 lg:px-8 shrink-0 gap-4">
       <div className="flex items-center gap-md shrink-0">
         <h2 className="font-headline-md text-headline-md font-bold text-on-surface hidden lg:block truncate">Urban Intelligence Platform</h2>
         <button className="lg:hidden text-on-surface-variant hover:text-primary transition-colors">
@@ -61,7 +77,7 @@ export default function Header({
       </div>
 
       {/* Centered Global Metric Ticker */}
-      <div className="hidden xl:flex items-center gap-6 bg-white/5 border border-white/10 px-4 py-1.5 rounded-full text-xs font-mono text-white/80">
+      <div className="hidden xl:flex items-center gap-6 bg-background border border-border px-4 py-1.5 rounded-full text-xs font-mono text-foreground/80">
         <div className="flex items-center gap-1.5 border-r border-white/10 pr-4">
           <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
           <span>PROJECTED DELAY SAVED:</span>
@@ -116,16 +132,6 @@ export default function Header({
           )}
 
           <button 
-            onClick={toggleTheme} 
-            className="w-10 h-10 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high hover:text-primary transition-all duration-200"
-            title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
-          >
-            <span className="material-symbols-outlined">
-              {theme === 'dark' ? 'light_mode' : 'dark_mode'}
-            </span>
-          </button>
-
-          <button 
             onClick={() => setActiveDropdown(activeDropdown === 'notifications' ? null : 'notifications')} 
             className="w-10 h-10 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high hover:text-primary transition-all duration-200 relative"
           >
@@ -159,6 +165,14 @@ export default function Header({
               </button>
             </div>
           )}
+
+          <button 
+            onClick={toggleTheme}
+            className="w-10 h-10 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high hover:text-primary transition-all duration-200"
+            title="Toggle Theme"
+          >
+            <span className="material-symbols-outlined">{isDark ? 'light_mode' : 'dark_mode'}</span>
+          </button>
 
           <button 
             onClick={() => setActiveDropdown(activeDropdown === 'settings' ? null : 'settings')} 
