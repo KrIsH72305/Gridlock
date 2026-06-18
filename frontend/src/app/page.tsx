@@ -329,15 +329,15 @@ export default function LandingPage() {
             <div className="mt-10 grid grid-cols-2 md:grid-cols-4 gap-6 w-full max-w-3xl border-y border-[#7C5CFF]/20 py-6 bg-[#0c1024]/40 backdrop-blur-md rounded-2xl px-6">
               <div>
                 <span className="text-[10px] text-slate-400 block uppercase font-mono tracking-wider">Tickets Processed</span>
-                <span className="text-xl font-bold text-[#38BDF8] font-mono">{stats.violations.toLocaleString()}</span>
+                <span className="text-xl font-bold text-[#38BDF8] font-mono">{stats.violations.toLocaleString('en-US')}</span>
               </div>
               <div>
                 <span className="text-[10px] text-slate-400 block uppercase font-mono tracking-wider">Unique Events</span>
-                <span className="text-xl font-bold text-[#a78bfa] font-mono">{stats.deduplicated.toLocaleString()}</span>
+                <span className="text-xl font-bold text-[#a78bfa] font-mono">{stats.deduplicated.toLocaleString('en-US')}</span>
               </div>
               <div>
                 <span className="text-[10px] text-slate-400 block uppercase font-mono tracking-wider">Commuters Reclaimed</span>
-                <span className="text-xl font-bold text-emerald-400 font-mono">+{stats.commuteHours.toLocaleString()}h</span>
+                <span className="text-xl font-bold text-emerald-400 font-mono">+{stats.commuteHours.toLocaleString('en-US')}h</span>
               </div>
               <div>
                 <span className="text-[10px] text-slate-400 block uppercase font-mono tracking-wider">Fuel Saved (INR)</span>

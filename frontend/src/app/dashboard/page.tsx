@@ -214,6 +214,11 @@ export default function TrafficDashboard() {
     }
   }, [isPredictiveMode, forecastData]);
 
+  // Close Physics Inspector when switching tabs
+  useEffect(() => {
+    setSelectedHotspot(null);
+  }, [activeTab]);
+
   // Global Search Handler (searches and selects district)
   const handleGlobalSearch = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter' && globalSearchQuery.trim() !== '') {
@@ -447,7 +452,10 @@ export default function TrafficDashboard() {
           />
 
           {/* Tab Content Canvas */}
-          <main className="flex-1 overflow-y-auto p-4 md:p-8 bg-transparent flex flex-col relative z-10">
+          <main 
+            className="flex-1 overflow-y-auto p-4 md:p-8 bg-transparent flex flex-col relative z-10 transition-all duration-300"
+            style={{ marginRight: selectedHotspot ? '350px' : '0' }}
+          >
             {activeTab === "Command Center" && (
               <CommandCenterTab 
                 timeframe={timeframe}
