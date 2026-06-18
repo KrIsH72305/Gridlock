@@ -278,6 +278,18 @@ export default function LandingPage() {
     };
   }, []);
 
+  const [scrollOpacity, setScrollOpacity] = useState(0.8);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const heroHeight = window.innerHeight * 0.7;
+      const opacity = Math.max(0, 0.8 * (1 - window.scrollY / heroHeight));
+      setScrollOpacity(opacity);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   const toggleFaq = (index: number) => {
     setActiveFaqIndex(prev => (prev === index ? null : index));
   };
@@ -307,11 +319,12 @@ export default function LandingPage() {
       {/* Canvas Live Wallpaper background */}
       <canvas 
         ref={canvasRef} 
-        className="fixed inset-0 w-full h-full pointer-events-auto z-0 opacity-80" 
+        style={{ opacity: scrollOpacity }}
+        className="fixed inset-0 w-full h-full pointer-events-auto z-0 transition-opacity duration-150" 
       />
 
       {/* Grid Overlay */}
-      <div className="fixed inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.015)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.015)_1px,transparent_1px)] bg-[size:48px_48px] pointer-events-none z-1"></div>
+      <div className="fixed inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.015)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.015)_1px,transparent_1px)] bg-[size:48px_48px] pointer-events-none z-1" style={{ opacity: scrollOpacity }}></div>
 
       {/* Header / Navigation */}
       <header className="sticky top-0 z-50 w-full bg-[#05070f]/80 backdrop-blur-xl border-b border-[#7C5CFF]/10">

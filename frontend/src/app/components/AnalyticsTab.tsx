@@ -27,6 +27,8 @@ export default function AnalyticsTab() {
   const [timeframe, setTimeframe] = useState('Last 30 Days');
   const [loading, setLoading] = useState(true);
   const [shareMetric, setShareMetric] = useState<'count' | 'delay'>('count');
+  const [reallocateRatio, setReallocateRatio] = useState<number>(15);
+  const [autoDispatch, setAutoDispatch] = useState<boolean>(true);
 
   useEffect(() => {
     fetch(apiUrl(`/api/analytics?timeframe=${encodeURIComponent(timeframe)}`))
@@ -305,25 +307,61 @@ export default function AnalyticsTab() {
           </div>
         </section>
 
-        {/* AI Executive Briefing Card */}
+        {/* Interactive Patrol Optimizer Widget */}
         <section className="glass-card rounded-xl p-md bg-surface-container/50 border border-outline-variant flex flex-col justify-between">
           <div>
-            <div className="flex items-center gap-sm mb-sm text-tertiary">
-              <span className="material-symbols-outlined text-[20px]">smart_toy</span>
-              <h3 className="font-label-md text-label-md font-bold uppercase tracking-widest">Urban Intel AI Insight</h3>
+            <div className="flex items-center justify-between mb-sm">
+              <div className="flex items-center gap-sm text-[#7d37ff]">
+                <span className="material-symbols-outlined text-[20px]">insights</span>
+                <h3 className="font-label-md text-label-md font-bold uppercase tracking-widest text-on-surface">Patrol Reallocator</h3>
+              </div>
+              <span className="text-[10px] font-mono text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded font-bold">LIVE MODEL</span>
             </div>
-            <div className="space-y-sm text-xs leading-relaxed text-on-surface-variant">
-              <p>
-                🤖 <strong className="text-white">Commercial Loading Hotspots:</strong> While Friday evenings see the highest raw volume of scooter violations, <strong className="text-secondary">Tuesday 09:00 AM Peak</strong> remains the most economically destructive window due to heavy commercial loading vehicles blocking primary arteries near metro stations.
-              </p>
-              <p>
-                📈 <strong className="text-emerald-400">Patrol Reallocation ROI:</strong> Reallocating 15% of your patrol units from weekend parking duties to Tuesday morning arterial sweeps yields a projected <strong className="text-white">₹4.2M in commuter value recovered</strong>.
-              </p>
+            
+            <p className="text-[11px] text-on-surface-variant mb-md">Reallocate enforcement patrols from low-impact scooter tickets to Tuesday peak-hour arterial sweeps.</p>
+            
+            <div className="space-y-md">
+              <div>
+                <div className="flex justify-between text-xs font-mono mb-1">
+                  <span className="text-on-surface-variant">Reallocation Ratio</span>
+                  <span className="text-[#7d37ff] font-bold">{reallocateRatio}%</span>
+                </div>
+                <input 
+                  type="range" 
+                  min="0" 
+                  max="50" 
+                  step="5"
+                  value={reallocateRatio} 
+                  onChange={(e) => setReallocateRatio(parseInt(e.target.value))}
+                  className="w-full accent-[#7d37ff] bg-surface-container-highest h-1.5 rounded-lg cursor-pointer outline-none"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-sm">
+                <div className="bg-surface-container-high/40 p-2.5 rounded-lg border border-outline-variant/30">
+                  <span className="text-[9px] text-on-surface-variant block uppercase font-mono tracking-wider">Value Saved</span>
+                  <span className="text-sm font-bold text-emerald-400 font-mono">₹{(reallocateRatio * 280000).toLocaleString()}</span>
+                </div>
+                <div className="bg-surface-container-high/40 p-2.5 rounded-lg border border-outline-variant/30">
+                  <span className="text-[9px] text-on-surface-variant block uppercase font-mono tracking-wider">Arterial Clears</span>
+                  <span className="text-sm font-bold text-[#14d1ff] font-mono">+{Math.round(reallocateRatio * 0.8)} / week</span>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between text-xs pt-xs">
+                <span className="text-on-surface-variant">Auto Sweeps Optimizer</span>
+                <button 
+                  onClick={() => setAutoDispatch(!autoDispatch)}
+                  className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors cursor-pointer ${autoDispatch ? 'bg-[#7d37ff]' : 'bg-surface-container-highest'}`}
+                >
+                  <span className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform ${autoDispatch ? 'translate-x-4' : 'translate-x-1'}`} />
+                </button>
+              </div>
             </div>
           </div>
           <div className="mt-md pt-xs border-t border-outline-variant flex justify-between items-center text-[10px] text-on-surface-variant font-mono">
-            <span>Confidence Index: 94%</span>
-            <span className="text-emerald-400 flex items-center gap-0.5"><span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span> Live recommendations active</span>
+            <span>ROI Model v2.8</span>
+            <span className="text-emerald-400 flex items-center gap-0.5"><span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span> Live recommendations</span>
           </div>
         </section>
       </div>
