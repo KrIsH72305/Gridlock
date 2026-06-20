@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from 'react';
+import { apiUrl } from '../lib/api';
 
 interface Message {
   sender: 'user' | 'ai';
@@ -136,7 +137,7 @@ export default function AiAssistantModal({ isOpen, onClose }: AiAssistantModalPr
     setIsThinking(true);
 
     try {
-      const response = await fetch('http://localhost:8000/api/v1/ai/chat', {
+      const response = await fetch(apiUrl('/api/v1/ai/chat'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -4,6 +4,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { MapRef } from 'react-map-gl/maplibre';
 import MapComponent from './MapComponent';
 import AiAssistantModal from './AiAssistantModal';
+import { apiUrl } from '../lib/api';
 
 type Timeframe = 'Recent Dataset Window' | 'Most Recent Day' | 'Most Recent Week';
 type MapTheme = 'dark' | 'light' | 'satellite';
@@ -116,7 +117,7 @@ export default function CommandCenterTab({
   useEffect(() => {
     const fetchAlerts = async () => {
       try {
-        const res = await fetch('http://localhost:8000/api/v1/ai/alerts');
+        const res = await fetch(apiUrl('/api/v1/ai/alerts'));
         if (res.ok) {
           const data = await res.json();
           if (data.alerts && data.alerts.length > 0) {
