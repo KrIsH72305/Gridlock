@@ -842,7 +842,7 @@ export default function CctvIntelTab() {
                    </div>
                 ) : (
                    <div className="text-xs italic" style={{ color: 'var(--muted-text)' }}>
-                     Click to generate a real-time AI analysis report of the current CCTV viewport using Gemini 2.5 Flash.
+                     Click to generate a real-time AI analysis report of the current CCTV viewport using Gemini 3.5 Flash.
                    </div>
                 )}
               </div>
