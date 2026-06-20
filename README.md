@@ -76,45 +76,45 @@ For a massive logistics network like Flipkart, Gridlock is a game-changer. By li
 > Dark-mode MapLibre UI tracking active traffic bottlenecks, expectation vs reality volumes, and live capacity loss.
 
 <p align="center">
-  <img src="screenshots/Screenshot 2026-06-21 032833.png" width="48%" />
-  <img src="screenshots/Screenshot 2026-06-21 034633.png" width="48%" />
+  <img src="frontend/public/screenshots/Screenshot 2026-06-21 032833.png" width="48%" />
+  <img src="frontend/public/screenshots/Screenshot 2026-06-21 034633.png" width="48%" />
 </p>
 
 ### 2. 📷 CCTV Vision Intelligence
 > Simulated real-time CCTV camera telemetry tracking illegal double-parking, bus lane blockage, dwell times, and flow rates.
 
 <p align="center">
-  <img src="screenshots/Screenshot 2026-06-21 034654.png" width="31%" />
-  <img src="screenshots/Screenshot 2026-06-21 034708.png" width="31%" />
-  <img src="screenshots/Screenshot 2026-06-21 034722.png" width="31%" />
+  <img src="frontend/public/screenshots/Screenshot 2026-06-21 034654.png" width="31%" />
+  <img src="frontend/public/screenshots/Screenshot 2026-06-21 034708.png" width="31%" />
+  <img src="frontend/public/screenshots/Screenshot 2026-06-21 034722.png" width="31%" />
 </p>
 
 ### 3. 🚨 Patrol Bias & Blindspots
 > Visualizing expected violations vs actual patrol frequencies to identify areas suffering from enforcement gaps.
 
 <p align="center">
-  <img src="screenshots/Screenshot 2026-06-21 034734.png" width="48%" />
-  <img src="screenshots/Screenshot 2026-06-21 034750.png" width="48%" />
+  <img src="frontend/public/screenshots/Screenshot 2026-06-21 034734.png" width="48%" />
+  <img src="frontend/public/screenshots/Screenshot 2026-06-21 034750.png" width="48%" />
 </p>
 
 ### 4. 💬 Conversational AI Officer
 > Interactive chat panel integrated with Google Gemini, allowing traffic controllers to query SOPs and dispatch protocols.
 
 <p align="center">
-  <img src="screenshots/Screenshot 2026-06-21 035423.png" width="31%" />
-  <img src="screenshots/Screenshot 2026-06-21 035437.png" width="31%" />
-  <img src="screenshots/Screenshot 2026-06-21 035456.png" width="31%" />
+  <img src="frontend/public/screenshots/Screenshot 2026-06-21 035423.png" width="31%" />
+  <img src="frontend/public/screenshots/Screenshot 2026-06-21 035437.png" width="31%" />
+  <img src="frontend/public/screenshots/Screenshot 2026-06-21 035456.png" width="31%" />
 </p>
 
 ### 5. 💰 Economic Calculator & Warden Dispatch
 > Live sandbox calculating the economic cost of fuel wasted during gridlocks, and dispatching wardens to mitigate congestion.
 
 <p align="center">
-  <img src="screenshots/Screenshot 2026-06-21 035526.png" width="19%" />
-  <img src="screenshots/Screenshot 2026-06-21 035534.png" width="19%" />
-  <img src="screenshots/Screenshot 2026-06-21 035545.png" width="19%" />
-  <img src="screenshots/Screenshot 2026-06-21 035601.png" width="19%" />
-  <img src="screenshots/Screenshot 2026-06-21 035607.png" width="19%" />
+  <img src="frontend/public/screenshots/Screenshot 2026-06-21 035526.png" width="19%" />
+  <img src="frontend/public/screenshots/Screenshot 2026-06-21 035534.png" width="19%" />
+  <img src="frontend/public/screenshots/Screenshot 2026-06-21 035545.png" width="19%" />
+  <img src="frontend/public/screenshots/Screenshot 2026-06-21 035601.png" width="19%" />
+  <img src="frontend/public/screenshots/Screenshot 2026-06-21 035607.png" width="19%" />
 </p>
 
 ---
