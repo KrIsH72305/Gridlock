@@ -13,7 +13,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 try:
-    from google import genai
+    import google.generativeai as genai
 except ImportError:
     genai = None
 app = FastAPI()
@@ -907,46 +907,27 @@ def ai_chat(req: ChatRequest):
         return {"response": "AI module not loaded."}
     api_key = os.getenv("GEMINI_API_KEY")
     if not api_key or api_key == "YOUR_API_KEY_HERE":
-        return {"response": "Gemini API key not configured in backend/.env"}
-        
+        return {"response": "Gemini API key not configured."}
     try:
         conn = get_db_conn()
         cursor = conn.cursor()
         cursor.execute("SELECT location_name, bpr_delay, violation_count FROM hotspots WHERE timeframe = 'Recent Dataset Window' ORDER BY bpr_delay DESC LIMIT 3")
         hotspots = cursor.fetchall()
-        
         cursor.execute("SELECT location_name, patrol_bias_ratio FROM blindspots ORDER BY patrol_bias_ratio DESC LIMIT 2")
         blindspots = cursor.fetchall()
         conn.close()
 
-        context = f"""
-Live Data Context:
-Top Hotspots: {[h['location_name'] + ' (Delay: ' + str(h['bpr_delay']) + 'm, Violations: ' + str(h['violation_count']) + ')' for h in hotspots]}
-Top Patrol Blindspots: {[b['location_name'] + ' (Bias Ratio: ' + str(b['patrol_bias_ratio']) + ')' for b in blindspots]}
-Total Delay Saved Today: 2,840 minutes
-Economic Loss Prevented: ₹4.24 Lakhs
-"""
-        client = genai.Client(api_key=api_key)
-        prompt = f"""
-You are the Gridlock AI Officer for the Bengaluru Traffic Police.
-You must reply in the user's requested language code: {req.language} (e.g. 'en' for English, 'hi' for Hindi, 'te' for Telugu, etc).
-
-{context}
-
-User query: "{req.message}"
-
-Provide a helpful, direct, and short (1-2 sentences) response to the user's query based strictly on the live data context provided.
-Do not use markdown. If asked for a solution, recommend deploying tow trucks, traffic police, or adjusting patrol paths.
-"""
-        response = client.models.generate_content(
-            model='gemini-2.0-flash',
-            contents=prompt,
-        )
+        context = f"Top Hotspots: {[h['location_name'] + ' (Delay: ' + str(h['bpr_delay']) + 'm)' for h in hotspots]}. Top Blindspots: {[b['location_name'] for b in blindspots]}"
+        
+        genai.configure(api_key=api_key)
+        model = genai.GenerativeModel('gemini-1.5-flash')
+        prompt = f"You are the Gridlock AI Officer for Bengaluru Traffic Police. Reply in {req.language}. Context: {context}. Query: {req.message}. Provide a short 1-2 sentence response without markdown."
+        
+        response = model.generate_content(prompt)
         return {"response": response.text.strip()}
     except Exception as e:
         print(f"AI Chat Error: {e}")
-        return {"response": "Sorry, I am currently unable to process your request."}
-
+        return {"response": f"Failed: {str(e)}"}
 
 @app.get("/api/v1/ai/cctv/{camera_id}")
 def ai_cctv_analysis(camera_id: str):
@@ -954,39 +935,19 @@ def ai_cctv_analysis(camera_id: str):
         return {"response": "AI module not loaded."}
     api_key = os.getenv("GEMINI_API_KEY")
     if not api_key or api_key == "YOUR_API_KEY_HERE":
-        return {"response": "Gemini API key not configured in backend/.env"}
+        return {"response": "Gemini API key not configured."}
 
-    # Fetch camera data
     feeds = get_cctv_feeds()
-    camera = None
-    for c in feeds.get("cameras", []):
-        if c["id"] == camera_id:
-            camera = c
-            break
-
+    camera = next((c for c in feeds.get("cameras", []) if c["id"] == camera_id), None)
     if not camera:
         raise HTTPException(status_code=404, detail="Camera not found")
 
     try:
-        client = genai.Client(api_key=api_key)
-        prompt = f"""
-You are an expert AI Traffic Computer Vision Analyst for the Bengaluru Traffic Police.
-Analyze the following telemetry from CCTV camera '{camera['name']}' at {camera['location']}.
-
-Context:
-- Location Type: {camera.get('location_type', 'Street')}
-- Primary Issue: {camera.get('primary_issue', 'Congestion')}
-- Lanes Blocked: {camera['lanes_blocked']} out of {camera['lanes_total']}
-- Vehicles Detected: {camera['vehicles_detected']}
-- Average Dwell Time: {camera['avg_dwell_mins']} minutes
-- Congestion Severity Score: {camera['congestion_severity']}/100 ({camera['severity_label']})
-
-Provide a short, 2-3 sentence highly technical and actionable insight report based on this data. Do not use markdown. Start with a direct observation.
-"""
-        response = client.models.generate_content(
-            model='gemini-2.0-flash',
-            contents=prompt,
-        )
+        genai.configure(api_key=api_key)
+        model = genai.GenerativeModel('gemini-1.5-flash')
+        prompt = f"You are an expert AI Traffic Computer Vision Analyst. Camera '{camera['name']}'. Location Type: {camera.get('location_type', 'Street')}. Primary Issue: {camera.get('primary_issue', 'Congestion')}. Lanes Blocked: {camera['lanes_blocked']} out of {camera['lanes_total']}. Vehicles Detected: {camera['vehicles_detected']}. Congestion Severity Score: {camera['congestion_severity']}/100. Provide a short, 2-3 sentence highly technical and actionable insight report. No markdown."
+        
+        response = model.generate_content(prompt)
         return {"response": response.text.strip()}
     except Exception as e:
         print(f"AI CCTV Error: {e}")
