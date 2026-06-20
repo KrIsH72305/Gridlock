@@ -156,9 +156,9 @@ export default function CommandCenterTab({
               onChange={(e) => setTimeframe(e.target.value as Timeframe)}
               className="w-full md:w-auto appearance-none bg-surface-container border border-outline-variant rounded py-2 pl-3 pr-8 text-body-sm focus:outline-none focus:border-primary text-on-surface cursor-pointer"
             >
-              <option value="Recent Dataset Window">Recent Dataset Window</option>
-              <option value="Most Recent Day">Most Recent Day</option>
-              <option value="Most Recent Week">Most Recent Week</option>
+              <option value="Recent Dataset Window">All Available Records</option>
+              <option value="Most Recent Day">Last 24 Hours Analysis</option>
+              <option value="Most Recent Week">Last 7 Days Trend</option>
             </select>
             <span className="material-symbols-outlined absolute right-2 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none">expand_more</span>
           </div>
