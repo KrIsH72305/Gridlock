@@ -178,10 +178,4 @@ NEXT_PUBLIC_API_BASE_URL=http://localhost:8000
 
 ---
 
-## 👨‍💻 The Team
-* **[Your Name]** - Full Stack Developer & AI Integration
-  * [GitHub](https://github.com/YourUsername)
-  * [LinkedIn](https://linkedin.com/in/YourProfile)
 
----
-*Built with ❤️ for the Flipkart Gridlock Hackathon*
